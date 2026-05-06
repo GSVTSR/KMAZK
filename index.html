@@ -1,1 +1,239 @@
-file:///C:/Users/PC/Downloads/vigenere_explicador.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KMAZK</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #000; color: #888; font-family: 'Courier New', monospace; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; padding: 2rem; }
+
+  h1 { font-size: 11px; letter-spacing: 0.3em; color: #333; text-transform: uppercase; }
+
+  .menu { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+
+  .btn {
+    background: transparent;
+    border: 0.5px solid #333;
+    color: #666;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    padding: 10px 28px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn:hover { border-color: #888; color: #aaa; }
+
+  .footer { font-size: 9px; color: #222; letter-spacing: 0.2em; margin-top: 2rem; }
+
+  .panel { display: none; flex-direction: column; gap: 1.5rem; max-width: 680px; width: 100%; }
+  .panel.active { display: flex; }
+
+  .back { font-size: 10px; color: #333; cursor: pointer; letter-spacing: 0.15em; background: none; border: none; font-family: 'Courier New', monospace; text-transform: uppercase; }
+  .back:hover { color: #666; }
+
+  .panel-title { font-size: 10px; color: #444; letter-spacing: 0.2em; border-bottom: 0.5px solid #111; padding-bottom: 8px; }
+
+  .vigenere-wrap { display: flex; flex-direction: column; gap: 12px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .col { flex: 1; min-width: 160px; display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 10px; color: #444; letter-spacing: 0.1em; text-transform: uppercase; }
+  input[type=text] {
+    background: #050505;
+    border: 0.5px solid #222;
+    color: #888;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 8px 12px;
+    outline: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    width: 100%;
+  }
+  input[type=text]:focus { border-color: #444; }
+  .result { background: #050505; border: 0.5px solid #1a1a1a; padding: 12px 16px; font-size: 1.2rem; letter-spacing: 0.2em; color: #666; min-height: 48px; word-break: break-all; }
+  .steps-wrap { display: flex; flex-direction: column; gap: 4px; overflow-x: auto; }
+  .step-row { display: flex; gap: 2px; }
+  .cell { min-width: 30px; text-align: center; padding: 4px 2px; font-size: 11px; border-radius: 2px; flex-shrink: 0; }
+  .cell.hd { font-size: 9px; color: #333; min-width: 70px; }
+  .cell.tx { background: #0a1a0a; color: #3a6a3a; }
+  .cell.ky { background: #1a0a0a; color: #6a3a3a; }
+  .cell.nm { color: #333; font-size: 10px; }
+  .cell.rs { background: #0a0a1a; color: #3a3a6a; }
+  .tabs { display: flex; gap: 8px; }
+  .tab { padding: 5px 16px; border: 0.5px solid #222; background: transparent; color: #444; font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.1em; cursor: pointer; text-transform: uppercase; }
+  .tab.active { border-color: #444; color: #777; }
+  .formula { font-size: 10px; color: #333; padding: 6px 10px; border-left: 1px solid #1a1a1a; letter-spacing: 0.08em; }
+
+  .simbolo pre { font-size: 11px; line-height: 1.15; color: #555; letter-spacing: 0.07em; }
+
+  .puzzle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+  .puzzle-cell { background: #050505; border: 0.5px solid #1a1a1a; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .puzzle-num { font-size: 18px; color: #555; }
+  .puzzle-desc { font-size: 8px; color: #2a2a2a; letter-spacing: 0.08em; text-align: center; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<div id="home">
+  <h1>&gt;_ KMAZK :: selecciona una opcion</h1>
+  <div class="menu" style="margin-top:2rem;">
+    <button class="btn" onclick="show('vigenere')">[ 01 ] cifrador vigenere</button>
+    <button class="btn" onclick="show('simbolo')">[ 02 ] simbolo</button>
+    <button class="btn" onclick="show('puzzle')">[ 03 ] referencia de simbolos</button>
+  </div>
+  <div class="footer">&gt;_ welcome. good luck.</div>
+</div>
+
+<div class="panel" id="vigenere">
+  <button class="back" onclick="show('home')">&lt; volver</button>
+  <div class="panel-title">&gt;_ cifrador / descifrador vigenere</div>
+  <div class="vigenere-wrap">
+    <div class="tabs">
+      <button class="tab active" onclick="setMode('cifrar',this)">cifrar</button>
+      <button class="tab" onclick="setMode('descifrar',this)">descifrar</button>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label id="txt-lbl">texto a cifrar</label>
+        <input type="text" id="vtexto" value="BEHIND" oninput="vActualizar()">
+      </div>
+      <div class="col">
+        <label>clave</label>
+        <input type="text" id="vclave" value="FOOLINGUS" oninput="vActualizar()">
+      </div>
+    </div>
+    <div>
+      <label id="res-lbl">resultado cifrado</label>
+      <div class="result" id="vresult">—</div>
+    </div>
+    <div class="formula" id="vformula">cifrado: (letra + clave) mod 26</div>
+    <div class="steps-wrap" id="vsteps"></div>
+  </div>
+</div>
+
+<div class="panel" id="simbolo">
+  <button class="back" onclick="show('home')">&lt; volver</button>
+  <div class="panel-title">&gt;_ simbolo :: ascii art</div>
+  <div class="simbolo">
+<pre>
+              |
+             =|=
+            7,|,7
+           +  |  +
+          7   |   7
+         =~       ~=
+        7~         ~7
+       +~           +~
+      7~             ~7
+     =+               +=
+    7+                 +7
+   ~7                   7~
+  =7                     7=
+  ~+         |           +~
+  =7         |           7=
+   ~7                   7~
+    7+                 +7
+     =+               +=
+      7~             ~7
+       +~           ~+
+        7~         ~7
+         =+~     ~+=
+           7~   ~7
+            +~ ~+
+             =~=
+              +
+              |
+              |
+              |
+           ,=,7,=,
+          7,     ,7
+          +,     ,+
+           ,=,7,=,
+</pre>
+  </div>
+  <div style="font-size:9px;color:#222;letter-spacing:0.15em;margin-top:1rem;">&gt;_ VIGENERE :: IRZBRXU</div>
+</div>
+
+<div class="panel" id="puzzle">
+  <button class="back" onclick="show('home')">&lt; volver</button>
+  <div class="panel-title">&gt;_ referencia de simbolos para el puzzle</div>
+  <div class="puzzle-grid">
+    <div class="puzzle-cell"><div class="puzzle-num">1</div><div class="puzzle-desc">linea vertical<br>|</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">2</div><div class="puzzle-desc">horizontal<br>=</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">3</div><div class="puzzle-desc">diagonal suave<br>~</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">4</div><div class="puzzle-desc">vertice<br>+</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">5</div><div class="puzzle-desc">relleno denso<br>7</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">6</div><div class="puzzle-desc">relleno ligero<br>,</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">7</div><div class="puzzle-desc">minimo<br>.</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">8</div><div class="puzzle-desc">ruido<br>?</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">9</div><div class="puzzle-desc">interior<br>I</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">10</div><div class="puzzle-desc">separador<br>:</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">11</div><div class="puzzle-desc">guion<br>-</div></div>
+    <div class="puzzle-cell"><div class="puzzle-num">12</div><div class="puzzle-desc">diagonal<br>/\</div></div>
+  </div>
+</div>
+
+<script>
+let vmode = 'cifrar';
+
+function show(id) {
+  document.getElementById('home').style.display = id === 'home' ? 'flex' : 'none';
+  document.getElementById('home').style.flexDirection = 'column';
+  document.getElementById('home').style.alignItems = 'center';
+  ['vigenere','simbolo','puzzle'].forEach(p => {
+    document.getElementById(p).classList.remove('active');
+  });
+  if (id !== 'home') document.getElementById(id).classList.add('active');
+}
+
+function setMode(m, el) {
+  vmode = m;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('txt-lbl').textContent = m === 'cifrar' ? 'texto a cifrar' : 'texto a descifrar';
+  document.getElementById('res-lbl').textContent = m === 'cifrar' ? 'resultado cifrado' : 'resultado descifrado';
+  document.getElementById('vformula').textContent = m === 'cifrar' ? 'cifrado: (letra + clave) mod 26' : 'descifrado: (letra - clave + 26) mod 26';
+  vActualizar();
+}
+
+function vActualizar() {
+  const t = document.getElementById('vtexto').value.toUpperCase().replace(/[^A-Z]/g,'');
+  const k = document.getElementById('vclave').value.toUpperCase().replace(/[^A-Z]/g,'') || 'A';
+  if (!t) { document.getElementById('vresult').textContent = '—'; document.getElementById('vsteps').innerHTML = ''; return; }
+  let res = '', pasos = [];
+  for (let i = 0; i < t.length; i++) {
+    const tN = t.charCodeAt(i) - 65;
+    const kN = k.charCodeAt(i % k.length) - 65;
+    const rN = vmode === 'cifrar' ? (tN + kN) % 26 : ((tN - kN + 26) % 26);
+    const rL = String.fromCharCode(rN + 65);
+    res += rL;
+    pasos.push({ tL: t[i], kL: k[i % k.length], tN, kN, rN, rL });
+  }
+  document.getElementById('vresult').textContent = res;
+  const show = pasos.slice(0, 12);
+  let html = '';
+  const rows = [
+    ['letra', 'tx', p => p.tL],
+    ['num',   'nm', p => p.tN],
+    ['clave', 'ky', p => p.kL],
+    ['num',   'nm', p => p.kN],
+    ['result','rs', p => p.rL],
+  ];
+  rows.forEach(([label, cls, fn]) => {
+    html += `<div class="step-row"><div class="cell hd">${label}</div>`;
+    show.forEach(p => html += `<div class="cell ${cls}">${fn(p)}</div>`);
+    if (pasos.length > 12) html += `<div class="cell nm">+${pasos.length-12}</div>`;
+    html += '</div>';
+  });
+  document.getElementById('vsteps').innerHTML = html;
+}
+
+vActualizar();
+</script>
+</body>
+</html>
