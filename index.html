@@ -17,8 +17,6 @@
   .back { font-size:10px; color:#333; cursor:pointer; letter-spacing:0.15em; background:none; border:none; font-family:'Courier New',monospace; text-transform:uppercase; }
   .back:hover { color:#666; }
   .panel-title { font-size:10px; color:#444; letter-spacing:0.2em; border-bottom:0.5px solid #111; padding-bottom:8px; }
-
-  /* VIGENERE */
   .row { display:flex; gap:12px; flex-wrap:wrap; }
   .col { flex:1; min-width:160px; display:flex; flex-direction:column; gap:6px; }
   label { font-size:10px; color:#444; letter-spacing:0.1em; text-transform:uppercase; }
@@ -37,20 +35,37 @@
   .tab { padding:5px 16px; border:0.5px solid #222; background:transparent; color:#444; font-family:'Courier New',monospace; font-size:10px; letter-spacing:0.1em; cursor:pointer; text-transform:uppercase; }
   .tab.active { border-color:#444; color:#777; }
   .formula { font-size:10px; color:#333; padding:6px 10px; border-left:1px solid #1a1a1a; letter-spacing:0.08em; }
-
-  /* SIMBOLO */
   .simbolo pre { font-size:11px; line-height:1.15; color:#555; letter-spacing:0.07em; }
-
-  /* SYMBOL REF con zona clickeable oculta */
   .symref-wrap { position:relative; min-height:420px; }
   .puzzle-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:8px; }
   .puzzle-cell { background:#050505; border:0.5px solid #1a1a1a; padding:10px; display:flex; flex-direction:column; align-items:center; gap:4px; }
   .puzzle-num { font-size:18px; color:#555; }
   .puzzle-desc { font-size:8px; color:#2a2a2a; letter-spacing:0.08em; text-align:center; text-transform:uppercase; }
-  /* zona oculta — esquina aleatoria */
-  .secret-zone { position:absolute; bottom:18px; right:22px; width:14px; height:14px; cursor:pointer; opacity:0; }
 
-  /* PUZZLE PAGE */
+  .secret-zone {
+    position:absolute;
+    bottom:18px;
+    right:22px;
+    width:28px;
+    height:28px;
+    cursor:pointer;
+    opacity:0;
+    z-index:10;
+  }
+  .ghost-symbol {
+    position:absolute;
+    bottom:0;
+    right:0;
+    width:110px;
+    opacity:0;
+    transition: opacity 1.8s ease;
+    pointer-events:none;
+    filter: brightness(0.5);
+  }
+  .secret-zone:hover ~ .ghost-symbol {
+    opacity:1;
+  }
+
   .puzzle-page { display:none; flex-direction:column; gap:1.5rem; max-width:720px; width:100%; }
   .puzzle-page.active { display:flex; }
   .puzzle-intro { font-size:10px; color:#333; letter-spacing:0.12em; line-height:2; }
@@ -64,7 +79,6 @@
 </head>
 <body>
 
-<!-- HOME -->
 <div id="home" style="display:flex;flex-direction:column;align-items:center;">
   <h1>&gt;_ KMAZK :: select an option</h1>
   <div class="menu">
@@ -75,7 +89,6 @@
   <div class="footer">&gt;_ welcome. good luck.</div>
 </div>
 
-<!-- VIGENERE -->
 <div class="panel" id="vigenere">
   <button class="back" onclick="show('home')">&lt; back</button>
   <div class="panel-title">&gt;_ vigenere cipher / decipher</div>
@@ -101,7 +114,6 @@
   <div class="steps-wrap" id="vsteps"></div>
 </div>
 
-<!-- SIMBOLO -->
 <div class="panel" id="simbolo">
   <button class="back" onclick="show('home')">&lt; back</button>
   <div class="panel-title">&gt;_ symbol :: ascii art</div>
@@ -145,7 +157,6 @@
   <div style="font-size:9px;color:#1a1a1a;letter-spacing:0.15em;margin-top:1rem;">&gt;_ VIGENERE :: IRZBRXU</div>
 </div>
 
-<!-- SYMBOL REFERENCE con zona secreta -->
 <div class="panel" id="symref">
   <button class="back" onclick="show('home')">&lt; back</button>
   <div class="panel-title">&gt;_ symbol reference</div>
@@ -164,12 +175,11 @@
       <div class="puzzle-cell"><div class="puzzle-num">11</div><div class="puzzle-desc">dash<br>-</div></div>
       <div class="puzzle-cell"><div class="puzzle-num">12</div><div class="puzzle-desc">diagonal<br>/\</div></div>
     </div>
-    <!-- zona secreta invisible -->
-    <div class="secret-zone" onclick="show('puzzle')" title=""></div>
+    <div class="secret-zone" onclick="show('puzzle')"></div>
+    <img class="ghost-symbol" src="sssymbol.png" alt="">
   </div>
 </div>
 
-<!-- PUZZLE PAGE -->
 <div class="puzzle-page" id="puzzle">
   <button class="back" onclick="show('symref')">&lt; back</button>
   <div class="panel-title">&gt;_ puzzle :: replace numbers with symbols</div>
@@ -178,9 +188,7 @@
     replace them all to reveal the message.<br>
     reference: [03] symbol reference
   </div>
-
   <div class="num-grid" id="numgrid"></div>
-
   <div class="sym-key">
     <div class="sym-key-item">1 → <span>|</span> vertical</div>
     <div class="sym-key-item">2 → <span>=</span> horizontal</div>
@@ -195,65 +203,10 @@
     <div class="sym-key-item">11 → <span>-</span> dash</div>
     <div class="sym-key-item">12 → <span>/\</span> diagonal</div>
   </div>
-
   <div class="puzzle-hint">&gt;_ hint: the encoded word uses a key you may have already seen.</div>
 </div>
 
 <script>
-// symbol map
-const syms = {
-  1:'|', 2:'=', 3:'~', 4:'+', 5:'7',
-  6:',', 7:'.', 8:'?', 9:'I', 10:':', 11:'-', 12:'/\\'
-};
-
-// frase: "i told NTXKCY it was a bad idea to"
-// cada caracter mapeado a numero de simbolo
-// letras → número de su posición en orden de aparición + ruido
-// espacios → 8 (noise) para confundir
-// la idea: números están "desordenados visualmente" pero en orden correcto de lectura
-
-const phrase = "i told NTXKCY it was a bad idea to";
-// mapa de caracteres a numeros (algunos inventados para parecer desorden)
-const charMap = {
-  'i':9, ' ':8, 't':10, 'o':4, 'l':3, 'd':5,
-  'N':1, 'T':10, 'X':12, 'K':2, 'C':6, 'Y':11,
-  'w':3, 'a':7, 's':2, 'b':5, 'e':9, 'r':4
-};
-
-// generamos secuencia con números que parecen desorden
-// añadimos "ruido" intercalado
-const noiseNums = [8,5,3,8,1,8,10,8,5,8,3,8];
-let noiseIdx = 0;
-
-function buildGrid() {
-  const grid = document.getElementById('numgrid');
-  let html = '';
-  // añadir ruido antes
-  for(let i=0;i<4;i++) {
-    html += `<span style="color:#1a1a1a">${noiseNums[noiseIdx++ % noiseNums.length]}</span>`;
-  }
-  for(let i=0;i<phrase.length;i++){
-    const ch = phrase[i];
-    let num;
-    if(charMap[ch] !== undefined) num = charMap[ch];
-    else if(charMap[ch.toLowerCase()] !== undefined) num = charMap[ch.toLowerCase()];
-    else num = 8;
-    // intercalar ruido cada 5 chars
-    if(i>0 && i%5===0) {
-      html += `<span style="color:#1a1a1a">${noiseNums[noiseIdx++ % noiseNums.length]}</span>`;
-    }
-    html += `<span>${num}</span>`;
-  }
-  // ruido al final
-  for(let i=0;i<5;i++) {
-    html += `<span style="color:#1a1a1a">${noiseNums[noiseIdx++ % noiseNums.length]}</span>`;
-  }
-  grid.innerHTML = html;
-}
-
-buildGrid();
-
-// navegacion
 let vmode = 'cifrar';
 
 function show(id) {
@@ -302,6 +255,30 @@ function vActualizar() {
   document.getElementById('vsteps').innerHTML=html;
 }
 
+const charMap = {
+  'i':9, ' ':8, 't':10, 'o':4, 'l':3, 'd':5,
+  'N':1, 'T':10, 'X':12, 'K':2, 'C':6, 'Y':11,
+  'w':3, 'a':7, 's':2, 'b':5, 'e':9, 'r':4
+};
+const noiseNums = [8,5,3,8,1,8,10,8,5,8,3,8];
+let noiseIdx = 0;
+const phrase = "i told NTXKCY it was a bad idea to";
+
+function buildGrid() {
+  const grid = document.getElementById('numgrid');
+  let html = '';
+  for(let i=0;i<4;i++) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+  for(let i=0;i<phrase.length;i++){
+    const ch=phrase[i];
+    let num = charMap[ch]!==undefined ? charMap[ch] : (charMap[ch.toLowerCase()]!==undefined ? charMap[ch.toLowerCase()] : 8);
+    if(i>0&&i%5===0) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+    html+=`<span>${num}</span>`;
+  }
+  for(let i=0;i<5;i++) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+  grid.innerHTML=html;
+}
+
+buildGrid();
 vActualizar();
 </script>
 </body>
