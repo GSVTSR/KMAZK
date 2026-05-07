@@ -1,124 +1,110 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KMAZK</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #000; color: #888; font-family: 'Courier New', monospace; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; padding: 2rem; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000; color:#888; font-family:'Courier New',monospace; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2rem; padding:2rem; }
+  h1 { font-size:11px; letter-spacing:0.3em; color:#333; text-transform:uppercase; }
+  .menu { display:flex; flex-direction:column; gap:12px; align-items:center; margin-top:2rem; }
+  .btn { background:transparent; border:0.5px solid #333; color:#666; font-family:'Courier New',monospace; font-size:12px; letter-spacing:0.15em; padding:10px 28px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
+  .btn:hover { border-color:#888; color:#aaa; }
+  .footer { font-size:9px; color:#222; letter-spacing:0.2em; margin-top:2rem; }
+  .panel { display:none; flex-direction:column; gap:1.5rem; max-width:720px; width:100%; }
+  .panel.active { display:flex; }
+  .back { font-size:10px; color:#333; cursor:pointer; letter-spacing:0.15em; background:none; border:none; font-family:'Courier New',monospace; text-transform:uppercase; }
+  .back:hover { color:#666; }
+  .panel-title { font-size:10px; color:#444; letter-spacing:0.2em; border-bottom:0.5px solid #111; padding-bottom:8px; }
 
-  h1 { font-size: 11px; letter-spacing: 0.3em; color: #333; text-transform: uppercase; }
+  /* VIGENERE */
+  .row { display:flex; gap:12px; flex-wrap:wrap; }
+  .col { flex:1; min-width:160px; display:flex; flex-direction:column; gap:6px; }
+  label { font-size:10px; color:#444; letter-spacing:0.1em; text-transform:uppercase; }
+  input[type=text] { background:#050505; border:0.5px solid #222; color:#888; font-family:'Courier New',monospace; font-size:12px; padding:8px 12px; outline:none; letter-spacing:0.1em; text-transform:uppercase; width:100%; }
+  input[type=text]:focus { border-color:#444; }
+  .vresult { background:#050505; border:0.5px solid #1a1a1a; padding:12px 16px; font-size:1.2rem; letter-spacing:0.2em; color:#666; min-height:48px; word-break:break-all; }
+  .steps-wrap { display:flex; flex-direction:column; gap:4px; overflow-x:auto; }
+  .step-row { display:flex; gap:2px; }
+  .cell { min-width:30px; text-align:center; padding:4px 2px; font-size:11px; border-radius:2px; flex-shrink:0; }
+  .cell.hd { font-size:9px; color:#333; min-width:70px; }
+  .cell.tx { background:#0a1a0a; color:#3a6a3a; }
+  .cell.ky { background:#1a0a0a; color:#6a3a3a; }
+  .cell.nm { color:#333; font-size:10px; }
+  .cell.rs { background:#0a0a1a; color:#3a3a6a; }
+  .tabs { display:flex; gap:8px; }
+  .tab { padding:5px 16px; border:0.5px solid #222; background:transparent; color:#444; font-family:'Courier New',monospace; font-size:10px; letter-spacing:0.1em; cursor:pointer; text-transform:uppercase; }
+  .tab.active { border-color:#444; color:#777; }
+  .formula { font-size:10px; color:#333; padding:6px 10px; border-left:1px solid #1a1a1a; letter-spacing:0.08em; }
 
-  .menu { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+  /* SIMBOLO */
+  .simbolo pre { font-size:11px; line-height:1.15; color:#555; letter-spacing:0.07em; }
 
-  .btn {
-    background: transparent;
-    border: 0.5px solid #333;
-    color: #666;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    letter-spacing: 0.15em;
-    padding: 10px 28px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    text-decoration: none;
-    display: inline-block;
-  }
-  .btn:hover { border-color: #888; color: #aaa; }
+  /* SYMBOL REF con zona clickeable oculta */
+  .symref-wrap { position:relative; min-height:420px; }
+  .puzzle-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:8px; }
+  .puzzle-cell { background:#050505; border:0.5px solid #1a1a1a; padding:10px; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .puzzle-num { font-size:18px; color:#555; }
+  .puzzle-desc { font-size:8px; color:#2a2a2a; letter-spacing:0.08em; text-align:center; text-transform:uppercase; }
+  /* zona oculta — esquina aleatoria */
+  .secret-zone { position:absolute; bottom:18px; right:22px; width:14px; height:14px; cursor:pointer; opacity:0; }
 
-  .footer { font-size: 9px; color: #222; letter-spacing: 0.2em; margin-top: 2rem; }
-
-  .panel { display: none; flex-direction: column; gap: 1.5rem; max-width: 680px; width: 100%; }
-  .panel.active { display: flex; }
-
-  .back { font-size: 10px; color: #333; cursor: pointer; letter-spacing: 0.15em; background: none; border: none; font-family: 'Courier New', monospace; text-transform: uppercase; }
-  .back:hover { color: #666; }
-
-  .panel-title { font-size: 10px; color: #444; letter-spacing: 0.2em; border-bottom: 0.5px solid #111; padding-bottom: 8px; }
-
-  .vigenere-wrap { display: flex; flex-direction: column; gap: 12px; }
-  .row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .col { flex: 1; min-width: 160px; display: flex; flex-direction: column; gap: 6px; }
-  label { font-size: 10px; color: #444; letter-spacing: 0.1em; text-transform: uppercase; }
-  input[type=text] {
-    background: #050505;
-    border: 0.5px solid #222;
-    color: #888;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    padding: 8px 12px;
-    outline: none;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    width: 100%;
-  }
-  input[type=text]:focus { border-color: #444; }
-  .result { background: #050505; border: 0.5px solid #1a1a1a; padding: 12px 16px; font-size: 1.2rem; letter-spacing: 0.2em; color: #666; min-height: 48px; word-break: break-all; }
-  .steps-wrap { display: flex; flex-direction: column; gap: 4px; overflow-x: auto; }
-  .step-row { display: flex; gap: 2px; }
-  .cell { min-width: 30px; text-align: center; padding: 4px 2px; font-size: 11px; border-radius: 2px; flex-shrink: 0; }
-  .cell.hd { font-size: 9px; color: #333; min-width: 70px; }
-  .cell.tx { background: #0a1a0a; color: #3a6a3a; }
-  .cell.ky { background: #1a0a0a; color: #6a3a3a; }
-  .cell.nm { color: #333; font-size: 10px; }
-  .cell.rs { background: #0a0a1a; color: #3a3a6a; }
-  .tabs { display: flex; gap: 8px; }
-  .tab { padding: 5px 16px; border: 0.5px solid #222; background: transparent; color: #444; font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.1em; cursor: pointer; text-transform: uppercase; }
-  .tab.active { border-color: #444; color: #777; }
-  .formula { font-size: 10px; color: #333; padding: 6px 10px; border-left: 1px solid #1a1a1a; letter-spacing: 0.08em; }
-
-  .simbolo pre { font-size: 11px; line-height: 1.15; color: #555; letter-spacing: 0.07em; }
-
-  .puzzle-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
-  .puzzle-cell { background: #050505; border: 0.5px solid #1a1a1a; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-  .puzzle-num { font-size: 18px; color: #555; }
-  .puzzle-desc { font-size: 8px; color: #2a2a2a; letter-spacing: 0.08em; text-align: center; text-transform: uppercase; }
+  /* PUZZLE PAGE */
+  .puzzle-page { display:none; flex-direction:column; gap:1.5rem; max-width:720px; width:100%; }
+  .puzzle-page.active { display:flex; }
+  .puzzle-intro { font-size:10px; color:#333; letter-spacing:0.12em; line-height:2; }
+  .num-grid { display:flex; flex-wrap:wrap; gap:6px; font-family:'Courier New',monospace; font-size:13px; color:#555; line-height:2.2; letter-spacing:0.08em; }
+  .num-grid span { display:inline-block; min-width:28px; text-align:center; }
+  .sym-key { display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); gap:6px; margin-top:8px; }
+  .sym-key-item { font-size:10px; color:#333; letter-spacing:0.08em; padding:4px 8px; border:0.5px solid #111; }
+  .sym-key-item span { color:#555; }
+  .puzzle-hint { font-size:9px; color:#222; letter-spacing:0.15em; margin-top:1rem; border-top:0.5px solid #0a0a0a; padding-top:12px; }
 </style>
 </head>
 <body>
 
-<div id="home">
-  <h1>&gt;_ KMAZK :: selecciona una opcion</h1>
-  <div class="menu" style="margin-top:2rem;">
-    <button class="btn" onclick="show('vigenere')">[ 01 ] cifrador vigenere</button>
-    <button class="btn" onclick="show('simbolo')">[ 02 ] simbolo</button>
-    <button class="btn" onclick="show('puzzle')">[ 03 ] referencia de simbolos</button>
+<!-- HOME -->
+<div id="home" style="display:flex;flex-direction:column;align-items:center;">
+  <h1>&gt;_ KMAZK :: select an option</h1>
+  <div class="menu">
+    <button class="btn" onclick="show('vigenere')">[01] vigenere cipher</button>
+    <button class="btn" onclick="show('simbolo')">[02] symbol</button>
+    <button class="btn" onclick="show('symref')">[03] symbol reference</button>
   </div>
   <div class="footer">&gt;_ welcome. good luck.</div>
 </div>
 
+<!-- VIGENERE -->
 <div class="panel" id="vigenere">
-  <button class="back" onclick="show('home')">&lt; volver</button>
-  <div class="panel-title">&gt;_ cifrador / descifrador vigenere</div>
-  <div class="vigenere-wrap">
-    <div class="tabs">
-      <button class="tab active" onclick="setMode('cifrar',this)">cifrar</button>
-      <button class="tab" onclick="setMode('descifrar',this)">descifrar</button>
-    </div>
-    <div class="row">
-      <div class="col">
-        <label id="txt-lbl">texto a cifrar</label>
-        <input type="text" id="vtexto" value="BEHIND" oninput="vActualizar()">
-      </div>
-      <div class="col">
-        <label>clave</label>
-        <input type="text" id="vclave" value="FOOLINGUS" oninput="vActualizar()">
-      </div>
-    </div>
-    <div>
-      <label id="res-lbl">resultado cifrado</label>
-      <div class="result" id="vresult">—</div>
-    </div>
-    <div class="formula" id="vformula">cifrado: (letra + clave) mod 26</div>
-    <div class="steps-wrap" id="vsteps"></div>
+  <button class="back" onclick="show('home')">&lt; back</button>
+  <div class="panel-title">&gt;_ vigenere cipher / decipher</div>
+  <div class="tabs">
+    <button class="tab active" onclick="setMode('cifrar',this)">encrypt</button>
+    <button class="tab" onclick="setMode('descifrar',this)">decrypt</button>
   </div>
+  <div class="row">
+    <div class="col">
+      <label id="txt-lbl">text to encrypt</label>
+      <input type="text" id="vtexto" value="BEHIND" oninput="vActualizar()">
+    </div>
+    <div class="col">
+      <label>key</label>
+      <input type="text" id="vclave" value="FOOLINGUS" oninput="vActualizar()">
+    </div>
+  </div>
+  <div>
+    <label id="res-lbl">encrypted result</label>
+    <div class="vresult" id="vresult">—</div>
+  </div>
+  <div class="formula" id="vformula">encrypt: (letter + key) mod 26</div>
+  <div class="steps-wrap" id="vsteps"></div>
 </div>
 
+<!-- SIMBOLO -->
 <div class="panel" id="simbolo">
-  <button class="back" onclick="show('home')">&lt; volver</button>
-  <div class="panel-title">&gt;_ simbolo :: ascii art</div>
+  <button class="back" onclick="show('home')">&lt; back</button>
+  <div class="panel-title">&gt;_ symbol :: ascii art</div>
   <div class="simbolo">
 <pre>
               |
@@ -156,81 +142,164 @@
            ,=,7,=,
 </pre>
   </div>
-  <div style="font-size:9px;color:#222;letter-spacing:0.15em;margin-top:1rem;">&gt;_ VIGENERE :: IRZBRXU</div>
+  <div style="font-size:9px;color:#1a1a1a;letter-spacing:0.15em;margin-top:1rem;">&gt;_ VIGENERE :: IRZBRXU</div>
 </div>
 
-<div class="panel" id="puzzle">
-  <button class="back" onclick="show('home')">&lt; volver</button>
-  <div class="panel-title">&gt;_ referencia de simbolos para el puzzle</div>
-  <div class="puzzle-grid">
-    <div class="puzzle-cell"><div class="puzzle-num">1</div><div class="puzzle-desc">linea vertical<br>|</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">2</div><div class="puzzle-desc">horizontal<br>=</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">3</div><div class="puzzle-desc">diagonal suave<br>~</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">4</div><div class="puzzle-desc">vertice<br>+</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">5</div><div class="puzzle-desc">relleno denso<br>7</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">6</div><div class="puzzle-desc">relleno ligero<br>,</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">7</div><div class="puzzle-desc">minimo<br>.</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">8</div><div class="puzzle-desc">ruido<br>?</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">9</div><div class="puzzle-desc">interior<br>I</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">10</div><div class="puzzle-desc">separador<br>:</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">11</div><div class="puzzle-desc">guion<br>-</div></div>
-    <div class="puzzle-cell"><div class="puzzle-num">12</div><div class="puzzle-desc">diagonal<br>/\</div></div>
+<!-- SYMBOL REFERENCE con zona secreta -->
+<div class="panel" id="symref">
+  <button class="back" onclick="show('home')">&lt; back</button>
+  <div class="panel-title">&gt;_ symbol reference</div>
+  <div class="symref-wrap">
+    <div class="puzzle-grid">
+      <div class="puzzle-cell"><div class="puzzle-num">1</div><div class="puzzle-desc">vertical line<br>|</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">2</div><div class="puzzle-desc">horizontal<br>=</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">3</div><div class="puzzle-desc">soft diagonal<br>~</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">4</div><div class="puzzle-desc">vertex<br>+</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">5</div><div class="puzzle-desc">dense fill<br>7</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">6</div><div class="puzzle-desc">light fill<br>,</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">7</div><div class="puzzle-desc">minimal<br>.</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">8</div><div class="puzzle-desc">noise<br>?</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">9</div><div class="puzzle-desc">interior<br>I</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">10</div><div class="puzzle-desc">separator<br>:</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">11</div><div class="puzzle-desc">dash<br>-</div></div>
+      <div class="puzzle-cell"><div class="puzzle-num">12</div><div class="puzzle-desc">diagonal<br>/\</div></div>
+    </div>
+    <!-- zona secreta invisible -->
+    <div class="secret-zone" onclick="show('puzzle')" title=""></div>
   </div>
 </div>
 
+<!-- PUZZLE PAGE -->
+<div class="puzzle-page" id="puzzle">
+  <button class="back" onclick="show('symref')">&lt; back</button>
+  <div class="panel-title">&gt;_ puzzle :: replace numbers with symbols</div>
+  <div class="puzzle-intro">
+    each number corresponds to a symbol.<br>
+    replace them all to reveal the message.<br>
+    reference: [03] symbol reference
+  </div>
+
+  <div class="num-grid" id="numgrid"></div>
+
+  <div class="sym-key">
+    <div class="sym-key-item">1 → <span>|</span> vertical</div>
+    <div class="sym-key-item">2 → <span>=</span> horizontal</div>
+    <div class="sym-key-item">3 → <span>~</span> soft diag</div>
+    <div class="sym-key-item">4 → <span>+</span> vertex</div>
+    <div class="sym-key-item">5 → <span>7</span> dense</div>
+    <div class="sym-key-item">6 → <span>,</span> light</div>
+    <div class="sym-key-item">7 → <span>.</span> minimal</div>
+    <div class="sym-key-item">8 → <span>?</span> noise</div>
+    <div class="sym-key-item">9 → <span>I</span> interior</div>
+    <div class="sym-key-item">10 → <span>:</span> separator</div>
+    <div class="sym-key-item">11 → <span>-</span> dash</div>
+    <div class="sym-key-item">12 → <span>/\</span> diagonal</div>
+  </div>
+
+  <div class="puzzle-hint">&gt;_ hint: the encoded word uses a key you may have already seen.</div>
+</div>
+
 <script>
+// symbol map
+const syms = {
+  1:'|', 2:'=', 3:'~', 4:'+', 5:'7',
+  6:',', 7:'.', 8:'?', 9:'I', 10:':', 11:'-', 12:'/\\'
+};
+
+// frase: "i told NTXKCY it was a bad idea to"
+// cada caracter mapeado a numero de simbolo
+// letras → número de su posición en orden de aparición + ruido
+// espacios → 8 (noise) para confundir
+// la idea: números están "desordenados visualmente" pero en orden correcto de lectura
+
+const phrase = "i told NTXKCY it was a bad idea to";
+// mapa de caracteres a numeros (algunos inventados para parecer desorden)
+const charMap = {
+  'i':9, ' ':8, 't':10, 'o':4, 'l':3, 'd':5,
+  'N':1, 'T':10, 'X':12, 'K':2, 'C':6, 'Y':11,
+  'w':3, 'a':7, 's':2, 'b':5, 'e':9, 'r':4
+};
+
+// generamos secuencia con números que parecen desorden
+// añadimos "ruido" intercalado
+const noiseNums = [8,5,3,8,1,8,10,8,5,8,3,8];
+let noiseIdx = 0;
+
+function buildGrid() {
+  const grid = document.getElementById('numgrid');
+  let html = '';
+  // añadir ruido antes
+  for(let i=0;i<4;i++) {
+    html += `<span style="color:#1a1a1a">${noiseNums[noiseIdx++ % noiseNums.length]}</span>`;
+  }
+  for(let i=0;i<phrase.length;i++){
+    const ch = phrase[i];
+    let num;
+    if(charMap[ch] !== undefined) num = charMap[ch];
+    else if(charMap[ch.toLowerCase()] !== undefined) num = charMap[ch.toLowerCase()];
+    else num = 8;
+    // intercalar ruido cada 5 chars
+    if(i>0 && i%5===0) {
+      html += `<span style="color:#1a1a1a">${noiseNums[noiseIdx++ % noiseNums.length]}</span>`;
+    }
+    html += `<span>${num}</span>`;
+  }
+  // ruido al final
+  for(let i=0;i<5;i++) {
+    html += `<span style="color:#1a1a1a">${noiseNums[noiseIdx++ % noiseNums.length]}</span>`;
+  }
+  grid.innerHTML = html;
+}
+
+buildGrid();
+
+// navegacion
 let vmode = 'cifrar';
 
 function show(id) {
-  document.getElementById('home').style.display = id === 'home' ? 'flex' : 'none';
-  document.getElementById('home').style.flexDirection = 'column';
-  document.getElementById('home').style.alignItems = 'center';
-  ['vigenere','simbolo','puzzle'].forEach(p => {
-    document.getElementById(p).classList.remove('active');
-  });
-  if (id !== 'home') document.getElementById(id).classList.add('active');
+  document.getElementById('home').style.display = 'none';
+  ['vigenere','simbolo','symref'].forEach(p => document.getElementById(p).classList.remove('active'));
+  document.getElementById('puzzle').classList.remove('active');
+  if(id === 'home') {
+    document.getElementById('home').style.display = 'flex';
+  } else if(id === 'puzzle') {
+    document.getElementById('puzzle').classList.add('active');
+  } else {
+    document.getElementById(id).classList.add('active');
+  }
 }
 
 function setMode(m, el) {
   vmode = m;
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('txt-lbl').textContent = m === 'cifrar' ? 'texto a cifrar' : 'texto a descifrar';
-  document.getElementById('res-lbl').textContent = m === 'cifrar' ? 'resultado cifrado' : 'resultado descifrado';
-  document.getElementById('vformula').textContent = m === 'cifrar' ? 'cifrado: (letra + clave) mod 26' : 'descifrado: (letra - clave + 26) mod 26';
+  document.getElementById('txt-lbl').textContent = m==='cifrar' ? 'text to encrypt' : 'text to decrypt';
+  document.getElementById('res-lbl').textContent = m==='cifrar' ? 'encrypted result' : 'decrypted result';
+  document.getElementById('vformula').textContent = m==='cifrar' ? 'encrypt: (letter + key) mod 26' : 'decrypt: (letter - key + 26) mod 26';
   vActualizar();
 }
 
 function vActualizar() {
   const t = document.getElementById('vtexto').value.toUpperCase().replace(/[^A-Z]/g,'');
   const k = document.getElementById('vclave').value.toUpperCase().replace(/[^A-Z]/g,'') || 'A';
-  if (!t) { document.getElementById('vresult').textContent = '—'; document.getElementById('vsteps').innerHTML = ''; return; }
-  let res = '', pasos = [];
-  for (let i = 0; i < t.length; i++) {
-    const tN = t.charCodeAt(i) - 65;
-    const kN = k.charCodeAt(i % k.length) - 65;
-    const rN = vmode === 'cifrar' ? (tN + kN) % 26 : ((tN - kN + 26) % 26);
-    const rL = String.fromCharCode(rN + 65);
-    res += rL;
-    pasos.push({ tL: t[i], kL: k[i % k.length], tN, kN, rN, rL });
+  if(!t){ document.getElementById('vresult').textContent='—'; document.getElementById('vsteps').innerHTML=''; return; }
+  let res='', pasos=[];
+  for(let i=0;i<t.length;i++){
+    const tN=t.charCodeAt(i)-65, kN=k.charCodeAt(i%k.length)-65;
+    const rN=vmode==='cifrar'?(tN+kN)%26:((tN-kN+26)%26);
+    res+=String.fromCharCode(rN+65);
+    pasos.push({tL:t[i],kL:k[i%k.length],tN,kN,rN,rL:String.fromCharCode(rN+65)});
   }
-  document.getElementById('vresult').textContent = res;
-  const show = pasos.slice(0, 12);
-  let html = '';
-  const rows = [
-    ['letra', 'tx', p => p.tL],
-    ['num',   'nm', p => p.tN],
-    ['clave', 'ky', p => p.kL],
-    ['num',   'nm', p => p.kN],
-    ['result','rs', p => p.rL],
-  ];
-  rows.forEach(([label, cls, fn]) => {
-    html += `<div class="step-row"><div class="cell hd">${label}</div>`;
-    show.forEach(p => html += `<div class="cell ${cls}">${fn(p)}</div>`);
-    if (pasos.length > 12) html += `<div class="cell nm">+${pasos.length-12}</div>`;
-    html += '</div>';
+  document.getElementById('vresult').textContent=res;
+  const show12=pasos.slice(0,12);
+  let html='';
+  [['letter','tx',p=>p.tL],['num','nm',p=>p.tN],['key','ky',p=>p.kL],['num','nm',p=>p.kN],['result','rs',p=>p.rL]].forEach(([lbl,cls,fn])=>{
+    html+=`<div class="step-row"><div class="cell hd">${lbl}</div>`;
+    show12.forEach(p=>html+=`<div class="cell ${cls}">${fn(p)}</div>`);
+    if(pasos.length>12) html+=`<div class="cell nm">+${pasos.length-12}</div>`;
+    html+='</div>';
   });
-  document.getElementById('vsteps').innerHTML = html;
+  document.getElementById('vsteps').innerHTML=html;
 }
 
 vActualizar();
