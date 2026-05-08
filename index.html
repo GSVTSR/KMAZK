@@ -65,49 +65,20 @@
   .key-error { font-size:9px; color:#3a0000; letter-spacing:0.1em; }
 
   /* FLOATING WINDOW */
-  .float-win {
-    position:fixed;
-    top:60px;
-    right:30px;
-    width:380px;
-    background:#000;
-    border:0.5px solid #2a2a2a;
-    z-index:500;
-    display:none;
-    flex-direction:column;
-    user-select:none;
-  }
+  .float-win { position:fixed; top:60px; right:30px; width:380px; background:#000; border:0.5px solid #2a2a2a; z-index:500; display:none; flex-direction:column; user-select:none; }
   .float-win.visible { display:flex; }
   .float-win.minimized .win-body { display:none; }
-  .win-titlebar {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:5px 10px;
-    border-bottom:0.5px solid #1a1a1a;
-    cursor:grab;
-    background:#050505;
-  }
+  .win-titlebar { display:flex; align-items:center; justify-content:space-between; padding:5px 10px; border-bottom:0.5px solid #1a1a1a; cursor:grab; background:#050505; }
   .win-titlebar:active { cursor:grabbing; }
   .win-title { font-size:9px; color:#2a2a2a; letter-spacing:0.15em; text-transform:uppercase; }
   .win-controls { display:flex; gap:8px; }
   .win-btn { background:none; border:0.5px solid #1a1a1a; color:#222; font-family:'Courier New',monospace; font-size:9px; padding:1px 6px; cursor:pointer; letter-spacing:0.05em; }
   .win-btn:hover { border-color:#444; color:#444; }
   .win-body { overflow:hidden; padding:0; }
-
-  /* BINARY LINES */
   .bin-track { overflow:hidden; height:22px; border-bottom:0.5px solid #0a0a0a; position:relative; }
   .bin-track:last-child { border-bottom:none; }
-  .bin-line {
-    position:absolute;
-    white-space:nowrap;
-    font-family:'Courier New',monospace;
-    font-size:9px;
-    color:#1c1c1c;
-    letter-spacing:0.04em;
-    top:50%;
-    transform:translateY(-50%);
-  }
+  .bin-line { position:absolute; white-space:nowrap; font-family:'Courier New',monospace; font-size:9px; color:#1c1c1c; letter-spacing:0.04em; top:50%; transform:translateY(-50%); transition:color 0.3s; }
+  .bin-line.help-flash { color:#444 !important; }
 
   /* WELCOME */
   .welcome-page { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:200; flex-direction:column; align-items:center; justify-content:center; gap:2rem; }
@@ -132,7 +103,6 @@
 </head>
 <body>
 
-<!-- HOME -->
 <div id="home" style="display:flex;flex-direction:column;align-items:center;">
   <h1>&gt;_ KMAZK :: select an option</h1>
   <div class="menu">
@@ -143,7 +113,6 @@
   <div class="footer">&gt;_ welcome. good luck.</div>
 </div>
 
-<!-- VIGENERE -->
 <div class="panel" id="vigenere">
   <button class="back" onclick="show('home')">&lt; back</button>
   <div class="panel-title">&gt;_ vigenere cipher / decipher</div>
@@ -169,7 +138,6 @@
   <div class="steps-wrap" id="vsteps"></div>
 </div>
 
-<!-- SIMBOLO -->
 <div class="panel" id="simbolo">
   <button class="back" onclick="show('home')">&lt; back</button>
   <div class="panel-title">&gt;_ symbol :: ascii art</div>
@@ -213,7 +181,6 @@
   <div style="font-size:9px;color:#1a1a1a;letter-spacing:0.15em;margin-top:1rem;">&gt;_ VIGENERE :: IRZBRXU</div>
 </div>
 
-<!-- SYMBOL REF -->
 <div class="panel" id="symref">
   <button class="back" onclick="show('home')">&lt; back</button>
   <div class="panel-title">&gt;_ symbol reference</div>
@@ -237,7 +204,6 @@
   </div>
 </div>
 
-<!-- PUZZLE -->
 <div class="puzzle-page" id="puzzle">
   <button class="back" onclick="show('symref')">&lt; back</button>
   <div class="panel-title">&gt;_ puzzle :: replace numbers with symbols</div>
@@ -264,7 +230,6 @@
   <div class="puzzle-hint">&gt;_ hint: the encoded word uses a key you may have already seen.</div>
 </div>
 
-<!-- KEY BAR -->
 <div class="key-bar" id="keyBar">
   <label>&gt;_</label>
   <input type="password" id="keyInput" placeholder="enter key..." onkeydown="if(event.key==='Enter')checkKey()">
@@ -272,10 +237,10 @@
   <span class="key-error" id="keyError"></span>
 </div>
 
-<!-- FLOATING BINARY WINDOW -->
+<!-- FLOATING WINDOW -->
 <div class="float-win" id="floatWin">
   <div class="win-titlebar" id="winBar">
-    <span class="win-title">&gt;_ err :: 0x4f2a</span>
+    <span class="win-title" id="winTitle">&gt;_ err :: 0x4f2a</span>
     <div class="win-controls">
       <button class="win-btn" onclick="toggleMin()">−</button>
       <button class="win-btn" onclick="closeFloat()">×</button>
@@ -293,7 +258,6 @@
   </div>
 </div>
 
-<!-- WELCOME -->
 <div class="welcome-page" id="welcomePage">
   <div style="position:absolute;top:8%;left:5%;font-size:9px;color:#111;font-family:'Courier New',monospace;">&gt;_ authenticated</div>
   <div style="position:absolute;top:8%;right:5%;font-size:9px;color:#111;font-family:'Courier New',monospace;">session::active</div>
@@ -308,7 +272,6 @@
   <button class="welcome-logout" onclick="logout()">[logout]</button>
 </div>
 
-<!-- SUBPAGES -->
 <div class="subpage" id="sub-logs">
   <div class="subpage-title">&gt;_ logs</div>
   <div class="subpage-content">no entries found.<br><span style="color:#111">· · ·</span><br>this directory is empty.</div>
@@ -331,36 +294,88 @@
 </div>
 
 <script>
-// ── BINARY MESSAGE ──
+// ── STATE ──
+let loggedIn = false;
+let minimized = false;
+let animFrame;
+
+// ── BINARY / TEXT CONTENT ──
 function textToBin(str) {
   return str.split('').map(c => c.charCodeAt(0).toString(2).padStart(8,'0')).join(' ');
 }
-const msg = textToBin('woops, wrong place fool');
-const pad = '   ';
-const fullLine = msg + pad + msg + pad + msg + pad;
 
-// directions: 0=right, 1=left alternating
-const offsets = [0, 0, 0, 0, 0, 0, 0, 0];
-const speeds  = [0.4, 0.35, 0.42, 0.38, 0.41, 0.36, 0.43, 0.37];
-const dirs    = [1, -1, 1, -1, 1, -1, 1, -1]; // odd=left, even=right
+function getLineContent(idx) {
+  // 0.1% chance of HELP on any line
+  if(Math.random() < 0.001) return 'H E L P';
+  if(!loggedIn) {
+    // binary of "woops, wrong place fool"
+    const msg = textToBin('woops, wrong place fool');
+    return msg + '   ' + msg + '   ' + msg;
+  } else {
+    // logged in: numbers spelling WHAT ARE YOU DOING HERE
+    const msg = 'W H A T   A R E   Y O U   D O I N G   H E R E';
+    return msg + '     ' + msg + '     ' + msg;
+  }
+}
+
+// ── ANIMATION ──
+const offsets = [0,0,0,0,0,0,0,0];
+const speeds  = [0.4,0.35,0.42,0.38,0.41,0.36,0.43,0.37];
+const dirs    = [1,-1,1,-1,1,-1,1,-1];
+const lineContents = ['','','','','','','',''];
+let helpActive = [false,false,false,false,false,false,false,false];
+let helpTimer  = [0,0,0,0,0,0,0,0];
+let frameCount = 0;
 
 function animateBinary() {
-  for(let i = 0; i < 8; i++) {
-    const el = document.getElementById('bl' + i);
+  frameCount++;
+  for(let i=0;i<8;i++){
+    const el = document.getElementById('bl'+i);
     if(!el) continue;
+
+    // every ~300 frames per line, roll for HELP
+    if(frameCount % (280 + i*17) === 0) {
+      if(Math.random() < 0.001 && !helpActive[i]) {
+        helpActive[i] = true;
+        helpTimer[i] = 120; // show for ~2 seconds
+        lineContents[i] = '  H  E  L  P  ';
+        el.classList.add('help-flash');
+      }
+    }
+
+    if(helpActive[i]) {
+      helpTimer[i]--;
+      if(helpTimer[i] <= 0) {
+        helpActive[i] = false;
+        el.classList.remove('help-flash');
+        lineContents[i] = '';
+      }
+    }
+
+    const content = helpActive[i] ? lineContents[i].repeat(12) : getLineContentStatic(i);
     offsets[i] -= dirs[i] * speeds[i];
-    const lineW = fullLine.length * 5.5;
-    if(offsets[i] > 0) offsets[i] -= lineW;
-    if(offsets[i] < -lineW) offsets[i] += lineW;
+    const lineW = content.length * 5.5;
+    if(offsets[i] > 0) offsets[i] -= lineW / 2;
+    if(offsets[i] < -lineW / 2) offsets[i] += lineW / 2;
     el.style.left = offsets[i] + 'px';
-    el.textContent = fullLine + fullLine;
+    el.textContent = content;
   }
-  requestAnimationFrame(animateBinary);
+  animFrame = requestAnimationFrame(animateBinary);
 }
+
+function getLineContentStatic(idx) {
+  if(!loggedIn) {
+    const msg = textToBin('woops, wrong place fool');
+    return msg + '   ' + msg + '   ' + msg;
+  } else {
+    const msg = 'W H A T   A R E   Y O U   D O I N G   H E R E';
+    return msg + '     ' + msg + '     ' + msg;
+  }
+}
+
 animateBinary();
 
-// ── FLOAT WINDOW DRAG ──
-let minimized = false;
+// ── FLOAT WINDOW ──
 function toggleMin() {
   minimized = !minimized;
   document.getElementById('floatWin').classList.toggle('minimized', minimized);
@@ -378,18 +393,18 @@ function showFloat() {
 (function makeDraggable() {
   const el = document.getElementById('floatWin');
   const bar = document.getElementById('winBar');
-  let ox=0, oy=0, mx=0, my=0;
+  let ox=0,oy=0,mx=0,my=0;
   bar.onmousedown = function(e) {
     if(e.target.classList.contains('win-btn')) return;
     e.preventDefault();
-    mx = e.clientX; my = e.clientY;
-    document.onmouseup = () => { document.onmouseup = null; document.onmousemove = null; };
+    mx=e.clientX; my=e.clientY;
+    document.onmouseup = () => { document.onmouseup=null; document.onmousemove=null; };
     document.onmousemove = function(e) {
-      ox = mx - e.clientX; oy = my - e.clientY;
-      mx = e.clientX; my = e.clientY;
-      el.style.top  = (el.offsetTop  - oy) + 'px';
-      el.style.left = (el.offsetLeft - ox) + 'px';
-      el.style.right = 'auto';
+      ox=mx-e.clientX; oy=my-e.clientY;
+      mx=e.clientX; my=e.clientY;
+      el.style.top=(el.offsetTop-oy)+'px';
+      el.style.left=(el.offsetLeft-ox)+'px';
+      el.style.right='auto';
     };
   };
 })();
@@ -397,46 +412,46 @@ function showFloat() {
 // ── NAVIGATION ──
 let vmode = 'cifrar';
 function show(id) {
-  document.getElementById('home').style.display = 'none';
-  ['vigenere','simbolo','symref'].forEach(p => document.getElementById(p).classList.remove('active'));
+  document.getElementById('home').style.display='none';
+  ['vigenere','simbolo','symref'].forEach(p=>document.getElementById(p).classList.remove('active'));
   document.getElementById('puzzle').classList.remove('active');
-  if(id === 'home') { document.getElementById('home').style.display = 'flex'; hideKeyBar(); }
-  else if(id === 'puzzle') { document.getElementById('puzzle').classList.add('active'); hideKeyBar(); }
+  if(id==='home'){ document.getElementById('home').style.display='flex'; hideKeyBar(); }
+  else if(id==='puzzle'){ document.getElementById('puzzle').classList.add('active'); hideKeyBar(); }
   else { document.getElementById(id).classList.add('active'); }
-  if(id === 'symref') showKeyBar(); else hideKeyBar();
+  if(id==='symref') showKeyBar(); else hideKeyBar();
 }
 
 // ── VIGENERE ──
-function setMode(m, el) {
-  vmode = m;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+function setMode(m,el) {
+  vmode=m;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('txt-lbl').textContent = m==='cifrar' ? 'text to encrypt' : 'text to decrypt';
-  document.getElementById('res-lbl').textContent = m==='cifrar' ? 'encrypted result' : 'decrypted result';
-  document.getElementById('vformula').textContent = m==='cifrar' ? 'encrypt: (letter + key) mod 26' : 'decrypt: (letter - key + 26) mod 26';
+  document.getElementById('txt-lbl').textContent=m==='cifrar'?'text to encrypt':'text to decrypt';
+  document.getElementById('res-lbl').textContent=m==='cifrar'?'encrypted result':'decrypted result';
+  document.getElementById('vformula').textContent=m==='cifrar'?'encrypt: (letter + key) mod 26':'decrypt: (letter - key + 26) mod 26';
   vActualizar();
 }
 function vActualizar() {
-  const t = document.getElementById('vtexto').value.toUpperCase().replace(/[^A-Z]/g,'');
-  const k = document.getElementById('vclave').value.toUpperCase().replace(/[^A-Z]/g,'') || 'A';
-  if(!t) { document.getElementById('vresult').textContent='—'; document.getElementById('vsteps').innerHTML=''; return; }
-  let res='', pasos=[];
-  for(let i=0;i<t.length;i++) {
-    const tN=t.charCodeAt(i)-65, kN=k.charCodeAt(i%k.length)-65;
+  const t=document.getElementById('vtexto').value.toUpperCase().replace(/[^A-Z]/g,'');
+  const k=document.getElementById('vclave').value.toUpperCase().replace(/[^A-Z]/g,'')||'A';
+  if(!t){document.getElementById('vresult').textContent='—';document.getElementById('vsteps').innerHTML='';return;}
+  let res='',pasos=[];
+  for(let i=0;i<t.length;i++){
+    const tN=t.charCodeAt(i)-65,kN=k.charCodeAt(i%k.length)-65;
     const rN=vmode==='cifrar'?(tN+kN)%26:((tN-kN+26)%26);
     res+=String.fromCharCode(rN+65);
     pasos.push({tL:t[i],kL:k[i%k.length],tN,kN,rN,rL:String.fromCharCode(rN+65)});
   }
-  document.getElementById('vresult').textContent = res;
-  const s = pasos.slice(0,12);
-  let html = '';
-  [['letter','tx',p=>p.tL],['num','nm',p=>p.tN],['key','ky',p=>p.kL],['num','nm',p=>p.kN],['result','rs',p=>p.rL]].forEach(([lbl,cls,fn]) => {
-    html += `<div class="step-row"><div class="cell hd">${lbl}</div>`;
-    s.forEach(p => html += `<div class="cell ${cls}">${fn(p)}</div>`);
-    if(pasos.length>12) html += `<div class="cell nm">+${pasos.length-12}</div>`;
-    html += '</div>';
+  document.getElementById('vresult').textContent=res;
+  const s=pasos.slice(0,12);
+  let html='';
+  [['letter','tx',p=>p.tL],['num','nm',p=>p.tN],['key','ky',p=>p.kL],['num','nm',p=>p.kN],['result','rs',p=>p.rL]].forEach(([lbl,cls,fn])=>{
+    html+=`<div class="step-row"><div class="cell hd">${lbl}</div>`;
+    s.forEach(p=>html+=`<div class="cell ${cls}">${fn(p)}</div>`);
+    if(pasos.length>12)html+=`<div class="cell nm">+${pasos.length-12}</div>`;
+    html+='</div>';
   });
-  document.getElementById('vsteps').innerHTML = html;
+  document.getElementById('vsteps').innerHTML=html;
 }
 
 // ── PUZZLE ──
@@ -444,51 +459,59 @@ const charMap={'i':9,' ':8,'t':10,'o':4,'l':3,'d':5,'N':1,'T':10,'X':12,'K':2,'C
 const noiseNums=[8,5,3,8,1,8,10,8,5,8,3,8];
 let noiseIdx=0;
 const phrase="i told NTXKCY it was a bad idea to";
-function buildGrid() {
-  const grid = document.getElementById('numgrid');
-  let html = '';
-  for(let i=0;i<4;i++) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
-  for(let i=0;i<phrase.length;i++) {
+function buildGrid(){
+  const grid=document.getElementById('numgrid');
+  let html='';
+  for(let i=0;i<4;i++)html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+  for(let i=0;i<phrase.length;i++){
     const ch=phrase[i];
     let num=charMap[ch]!==undefined?charMap[ch]:(charMap[ch.toLowerCase()]!==undefined?charMap[ch.toLowerCase()]:8);
-    if(i>0&&i%5===0) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+    if(i>0&&i%5===0)html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
     html+=`<span>${num}</span>`;
   }
-  for(let i=0;i<5;i++) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
-  grid.innerHTML = html;
+  for(let i=0;i<5;i++)html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+  grid.innerHTML=html;
 }
 buildGrid();
 
 // ── KEY BAR ──
-function showKeyBar() { document.getElementById('keyBar').classList.add('visible'); }
-function hideKeyBar() { document.getElementById('keyBar').classList.remove('visible'); document.getElementById('keyError').textContent=''; }
+function showKeyBar(){ document.getElementById('keyBar').classList.add('visible'); }
+function hideKeyBar(){ document.getElementById('keyBar').classList.remove('visible'); document.getElementById('keyError').textContent=''; }
 
-async function checkKey() {
-  const raw = document.getElementById('keyInput').value.toUpperCase().replace(/\s/g,'');
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
-  const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-  if(hash === 'a73f06db3480ca8c32e72365168d4f86e075d7c7a56f612c1ba3328dfab0ba0f') {
+async function checkKey(){
+  const raw=document.getElementById('keyInput').value.toUpperCase().replace(/\s/g,'');
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw));
+  const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(hash==='a73f06db3480ca8c32e72365168d4f86e075d7c7a56f612c1ba3328dfab0ba0f'){
     hideKeyBar();
-    document.getElementById('keyInput').value = '';
+    document.getElementById('keyInput').value='';
+    loggedIn = true;
+    // update float window title
+    document.getElementById('winTitle').textContent = '>_ session :: active';
+    showFloat();
     document.getElementById('welcomePage').classList.add('active');
   } else {
-    document.getElementById('keyError').textContent = 'access denied';
-    setTimeout(() => {
-      document.getElementById('keyError').textContent = '';
+    document.getElementById('keyError').textContent='access denied';
+    setTimeout(()=>{
+      document.getElementById('keyError').textContent='';
       hideKeyBar();
+      loggedIn = false;
+      document.getElementById('winTitle').textContent = '>_ err :: 0x4f2a';
       showFloat();
-    }, 800);
+    },800);
   }
 }
 
 // ── WELCOME ──
-function logout() {
+function logout(){
   document.getElementById('welcomePage').classList.remove('active');
-  document.getElementById('keyInput').value = '';
+  document.getElementById('keyInput').value='';
+  loggedIn = false;
+  document.getElementById('winTitle').textContent = '>_ err :: 0x4f2a';
   show('symref');
 }
-function showSub(id) {
-  ['logs','videos','files','images'].forEach(s => document.getElementById('sub-'+s).classList.remove('active'));
+function showSub(id){
+  ['logs','videos','files','images'].forEach(s=>document.getElementById('sub-'+s).classList.remove('active'));
   if(id) document.getElementById('sub-'+id).classList.add('active');
 }
 
