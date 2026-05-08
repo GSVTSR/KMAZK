@@ -20,8 +20,8 @@
   .row { display:flex; gap:12px; flex-wrap:wrap; }
   .col { flex:1; min-width:160px; display:flex; flex-direction:column; gap:6px; }
   label { font-size:10px; color:#444; letter-spacing:0.1em; text-transform:uppercase; }
-  input[type=text] { background:#050505; border:0.5px solid #222; color:#888; font-family:'Courier New',monospace; font-size:12px; padding:8px 12px; outline:none; letter-spacing:0.1em; text-transform:uppercase; width:100%; }
-  input[type=text]:focus { border-color:#444; }
+  input[type=text], input[type=password] { background:#050505; border:0.5px solid #222; color:#888; font-family:'Courier New',monospace; font-size:12px; padding:8px 12px; outline:none; letter-spacing:0.1em; text-transform:uppercase; width:100%; }
+  input[type=text]:focus, input[type=password]:focus { border-color:#444; }
   .vresult { background:#050505; border:0.5px solid #1a1a1a; padding:12px 16px; font-size:1.2rem; letter-spacing:0.2em; color:#666; min-height:48px; word-break:break-all; }
   .steps-wrap { display:flex; flex-direction:column; gap:4px; overflow-x:auto; }
   .step-row { display:flex; gap:2px; }
@@ -41,31 +41,9 @@
   .puzzle-cell { background:#050505; border:0.5px solid #1a1a1a; padding:10px; display:flex; flex-direction:column; align-items:center; gap:4px; }
   .puzzle-num { font-size:18px; color:#555; }
   .puzzle-desc { font-size:8px; color:#2a2a2a; letter-spacing:0.08em; text-align:center; text-transform:uppercase; }
-
-  .secret-zone {
-    position:absolute;
-    bottom:18px;
-    right:22px;
-    width:28px;
-    height:28px;
-    cursor:pointer;
-    opacity:0;
-    z-index:10;
-  }
-  .ghost-symbol {
-    position:absolute;
-    bottom:0;
-    right:0;
-    width:110px;
-    opacity:0;
-    transition: opacity 1.8s ease;
-    pointer-events:none;
-    filter: brightness(0.5);
-  }
-  .secret-zone:hover ~ .ghost-symbol {
-    opacity:1;
-  }
-
+  .secret-zone { position:absolute; bottom:18px; right:22px; width:28px; height:28px; cursor:pointer; opacity:0; z-index:10; }
+  .ghost-symbol { position:absolute; bottom:0; right:0; width:110px; opacity:0; transition:opacity 1.8s ease; pointer-events:none; filter:brightness(0.5); }
+  .secret-zone:hover ~ .ghost-symbol { opacity:1; }
   .puzzle-page { display:none; flex-direction:column; gap:1.5rem; max-width:720px; width:100%; }
   .puzzle-page.active { display:flex; }
   .puzzle-intro { font-size:10px; color:#333; letter-spacing:0.12em; line-height:2; }
@@ -75,10 +53,78 @@
   .sym-key-item { font-size:10px; color:#333; letter-spacing:0.08em; padding:4px 8px; border:0.5px solid #111; }
   .sym-key-item span { color:#555; }
   .puzzle-hint { font-size:9px; color:#222; letter-spacing:0.15em; margin-top:1rem; border-top:0.5px solid #0a0a0a; padding-top:12px; }
+
+  /* KEY INPUT BAR */
+  .key-bar {
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    display:none;
+    align-items:center;
+    gap:8px;
+    padding:10px 20px;
+    background:#000;
+    border-top:0.5px solid #111;
+    z-index:100;
+  }
+  .key-bar.visible { display:flex; }
+  .key-bar label { font-size:9px; color:#333; letter-spacing:0.15em; white-space:nowrap; }
+  .key-bar input { flex:1; max-width:260px; background:#000; border:none; border-bottom:0.5px solid #222; color:#333; font-family:'Courier New',monospace; font-size:11px; padding:4px 6px; outline:none; letter-spacing:0.15em; }
+  .key-bar input:focus { border-bottom-color:#444; color:#555; }
+  .key-bar button { background:none; border:0.5px solid #1a1a1a; color:#2a2a2a; font-family:'Courier New',monospace; font-size:9px; padding:4px 10px; cursor:pointer; letter-spacing:0.1em; text-transform:uppercase; }
+  .key-bar button:hover { border-color:#333; color:#444; }
+  .key-error { font-size:9px; color:#3a0000; letter-spacing:0.1em; }
+
+  /* WRONG PAGE — draggable eye */
+  .wrong-page { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:200; align-items:center; justify-content:center; }
+  .wrong-page.active { display:flex; }
+  .eye-box {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    border:0.5px solid #222;
+    padding:20px 24px;
+    cursor:grab;
+    user-select:none;
+    background:#000;
+    min-width:220px;
+  }
+  .eye-box:active { cursor:grabbing; }
+  .eye-box pre { font-size:10px; line-height:1.3; color:#333; white-space:pre; letter-spacing:0.05em; }
+  .eye-box .eye-msg { font-size:9px; color:#2a2a2a; letter-spacing:0.15em; margin-top:12px; text-align:center; }
+  .eye-close { position:absolute; top:6px; right:8px; background:none; border:none; color:#222; font-family:'Courier New',monospace; font-size:10px; cursor:pointer; letter-spacing:0.1em; }
+  .eye-close:hover { color:#444; }
+  .wrong-back { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); font-size:9px; color:#222; letter-spacing:0.15em; cursor:pointer; background:none; border:none; font-family:'Courier New',monospace; text-transform:uppercase; }
+  .wrong-back:hover { color:#444; }
+  .wrong-deco { position:absolute; font-size:9px; color:#111; letter-spacing:0.1em; font-family:'Courier New',monospace; }
+
+  /* WELCOME PAGE */
+  .welcome-page { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:200; flex-direction:column; align-items:center; justify-content:center; gap:2rem; }
+  .welcome-page.active { display:flex; }
+  .welcome-title { font-size:13px; color:#555; letter-spacing:0.3em; text-transform:uppercase; }
+  .welcome-sub { font-size:9px; color:#222; letter-spacing:0.2em; }
+  .welcome-menu { display:flex; flex-direction:column; gap:10px; align-items:center; margin-top:1rem; }
+  .welcome-btn { background:transparent; border:0.5px solid #1a1a1a; color:#333; font-family:'Courier New',monospace; font-size:11px; letter-spacing:0.2em; padding:10px 32px; cursor:pointer; transition:all 0.3s; text-transform:uppercase; width:240px; text-align:left; }
+  .welcome-btn:hover { border-color:#444; color:#666; }
+  .welcome-btn span { color:#1a1a1a; margin-right:8px; }
+  .welcome-logout { position:absolute; bottom:20px; right:20px; font-size:9px; color:#1a1a1a; letter-spacing:0.15em; cursor:pointer; background:none; border:none; font-family:'Courier New',monospace; text-transform:uppercase; }
+  .welcome-logout:hover { color:#333; }
+  .welcome-deco { font-size:9px; color:#111; letter-spacing:0.1em; }
+
+  /* SUBPAGES */
+  .subpage { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:300; flex-direction:column; align-items:center; justify-content:center; gap:1.5rem; padding:2rem; }
+  .subpage.active { display:flex; }
+  .subpage-title { font-size:10px; color:#333; letter-spacing:0.3em; text-transform:uppercase; border-bottom:0.5px solid #111; padding-bottom:8px; width:100%; max-width:500px; }
+  .subpage-content { font-size:10px; color:#222; letter-spacing:0.12em; line-height:2.5; text-align:center; }
+  .subpage-back { font-size:9px; color:#222; letter-spacing:0.15em; cursor:pointer; background:none; border:none; font-family:'Courier New',monospace; text-transform:uppercase; }
+  .subpage-back:hover { color:#444; }
 </style>
 </head>
 <body>
 
+<!-- HOME -->
 <div id="home" style="display:flex;flex-direction:column;align-items:center;">
   <h1>&gt;_ KMAZK :: select an option</h1>
   <div class="menu">
@@ -89,6 +135,7 @@
   <div class="footer">&gt;_ welcome. good luck.</div>
 </div>
 
+<!-- VIGENERE -->
 <div class="panel" id="vigenere">
   <button class="back" onclick="show('home')">&lt; back</button>
   <div class="panel-title">&gt;_ vigenere cipher / decipher</div>
@@ -114,6 +161,7 @@
   <div class="steps-wrap" id="vsteps"></div>
 </div>
 
+<!-- SIMBOLO -->
 <div class="panel" id="simbolo">
   <button class="back" onclick="show('home')">&lt; back</button>
   <div class="panel-title">&gt;_ symbol :: ascii art</div>
@@ -157,6 +205,7 @@
   <div style="font-size:9px;color:#1a1a1a;letter-spacing:0.15em;margin-top:1rem;">&gt;_ VIGENERE :: IRZBRXU</div>
 </div>
 
+<!-- SYMBOL REF -->
 <div class="panel" id="symref">
   <button class="back" onclick="show('home')">&lt; back</button>
   <div class="panel-title">&gt;_ symbol reference</div>
@@ -175,11 +224,12 @@
       <div class="puzzle-cell"><div class="puzzle-num">11</div><div class="puzzle-desc">dash<br>-</div></div>
       <div class="puzzle-cell"><div class="puzzle-num">12</div><div class="puzzle-desc">diagonal<br>/\</div></div>
     </div>
-    <div class="secret-zone" onclick="show('puzzle')"></div>
+    <div class="secret-zone" onclick="showKeyBar()"></div>
     <img class="ghost-symbol" src="sssymbol.png" alt="">
   </div>
 </div>
 
+<!-- PUZZLE -->
 <div class="puzzle-page" id="puzzle">
   <button class="back" onclick="show('symref')">&lt; back</button>
   <div class="panel-title">&gt;_ puzzle :: replace numbers with symbols</div>
@@ -206,79 +256,244 @@
   <div class="puzzle-hint">&gt;_ hint: the encoded word uses a key you may have already seen.</div>
 </div>
 
+<!-- KEY BAR -->
+<div class="key-bar" id="keyBar">
+  <label>&gt;_</label>
+  <input type="password" id="keyInput" placeholder="enter key..." onkeydown="if(event.key==='Enter')checkKey()">
+  <button onclick="checkKey()">confirm</button>
+  <span class="key-error" id="keyError"></span>
+</div>
+
+<!-- WRONG PAGE -->
+<div class="wrong-page" id="wrongPage">
+  <div class="wrong-deco" style="top:8%;left:5%;">&gt;_ access denied</div>
+  <div class="wrong-deco" style="top:8%;right:5%;">err::0x4f2a</div>
+  <div class="wrong-deco" style="bottom:12%;left:5%;">trace::null</div>
+  <div class="wrong-deco" style="bottom:12%;right:5%;">::rejected</div>
+
+  <div class="eye-box" id="eyeBox">
+    <button class="eye-close" onclick="closeEye()">[ minimize ]</button>
+    <pre id="eyeArt">
+  . . . . . . . . .
+. .               . .
+.   . . . . . . .   .
+. .   ,=====,   . .
+.   ./ o   o \.   .
+. . | |  ^  | | . .
+.   .\ . - . /.   .
+. .   '======='  . .
+.   . . . . . . .   .
+. .               . .
+  . . . . . . . . .</pre>
+    <div class="eye-msg" id="eyeMsg">&gt;_ solve to proceed</div>
+  </div>
+
+  <button class="wrong-back" onclick="closeWrong()">[ back ]</button>
+</div>
+
+<!-- WELCOME PAGE -->
+<div class="welcome-page" id="welcomePage">
+  <div class="welcome-deco" style="position:absolute;top:8%;left:5%;font-size:9px;color:#111;font-family:'Courier New',monospace;">&gt;_ authenticated</div>
+  <div class="welcome-deco" style="position:absolute;top:8%;right:5%;font-size:9px;color:#111;font-family:'Courier New',monospace;">session::active</div>
+  <div class="welcome-title">welcome, user mitska</div>
+  <div class="welcome-sub">&gt;_ select a directory</div>
+  <div class="welcome-menu">
+    <button class="welcome-btn" onclick="showSub('logs')"><span>[01]</span> logs</button>
+    <button class="welcome-btn" onclick="showSub('videos')"><span>[02]</span> videos</button>
+    <button class="welcome-btn" onclick="showSub('files')"><span>[03]</span> files</button>
+    <button class="welcome-btn" onclick="showSub('images')"><span>[04]</span> images</button>
+  </div>
+  <button class="welcome-logout" onclick="logout()">[logout]</button>
+</div>
+
+<!-- SUBPAGES -->
+<div class="subpage" id="sub-logs">
+  <div class="subpage-title">&gt;_ logs</div>
+  <div class="subpage-content">
+    no entries found.<br>
+    <span style="color:#111">· · ·</span><br>
+    this directory is empty.
+  </div>
+  <button class="subpage-back" onclick="showSub(null)">&lt; back</button>
+</div>
+<div class="subpage" id="sub-videos">
+  <div class="subpage-title">&gt;_ videos</div>
+  <div class="subpage-content">
+    no entries found.<br>
+    <span style="color:#111">· · ·</span><br>
+    this directory is empty.
+  </div>
+  <button class="subpage-back" onclick="showSub(null)">&lt; back</button>
+</div>
+<div class="subpage" id="sub-files">
+  <div class="subpage-title">&gt;_ files</div>
+  <div class="subpage-content">
+    no entries found.<br>
+    <span style="color:#111">· · ·</span><br>
+    this directory is empty.
+  </div>
+  <button class="subpage-back" onclick="showSub(null)">&lt; back</button>
+</div>
+<div class="subpage" id="sub-images">
+  <div class="subpage-title">&gt;_ images</div>
+  <div class="subpage-content">
+    no entries found.<br>
+    <span style="color:#111">· · ·</span><br>
+    this directory is empty.
+  </div>
+  <button class="subpage-back" onclick="showSub(null)">&lt; back</button>
+</div>
+
 <script>
+// ── NAVIGATION ──
 let vmode = 'cifrar';
 
 function show(id) {
   document.getElementById('home').style.display = 'none';
   ['vigenere','simbolo','symref'].forEach(p => document.getElementById(p).classList.remove('active'));
   document.getElementById('puzzle').classList.remove('active');
-  if(id === 'home') {
-    document.getElementById('home').style.display = 'flex';
-  } else if(id === 'puzzle') {
-    document.getElementById('puzzle').classList.add('active');
-  } else {
-    document.getElementById(id).classList.add('active');
-  }
+  if(id==='home') { document.getElementById('home').style.display='flex'; hideKeyBar(); }
+  else if(id==='puzzle') { document.getElementById('puzzle').classList.add('active'); hideKeyBar(); }
+  else { document.getElementById(id).classList.add('active'); }
+  if(id==='symref') showKeyBar();
+  else hideKeyBar();
 }
 
-function setMode(m, el) {
-  vmode = m;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+// ── VIGENERE ──
+function setMode(m,el) {
+  vmode=m;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('txt-lbl').textContent = m==='cifrar' ? 'text to encrypt' : 'text to decrypt';
-  document.getElementById('res-lbl').textContent = m==='cifrar' ? 'encrypted result' : 'decrypted result';
-  document.getElementById('vformula').textContent = m==='cifrar' ? 'encrypt: (letter + key) mod 26' : 'decrypt: (letter - key + 26) mod 26';
+  document.getElementById('txt-lbl').textContent=m==='cifrar'?'text to encrypt':'text to decrypt';
+  document.getElementById('res-lbl').textContent=m==='cifrar'?'encrypted result':'decrypted result';
+  document.getElementById('vformula').textContent=m==='cifrar'?'encrypt: (letter + key) mod 26':'decrypt: (letter - key + 26) mod 26';
   vActualizar();
 }
-
 function vActualizar() {
-  const t = document.getElementById('vtexto').value.toUpperCase().replace(/[^A-Z]/g,'');
-  const k = document.getElementById('vclave').value.toUpperCase().replace(/[^A-Z]/g,'') || 'A';
-  if(!t){ document.getElementById('vresult').textContent='—'; document.getElementById('vsteps').innerHTML=''; return; }
-  let res='', pasos=[];
+  const t=document.getElementById('vtexto').value.toUpperCase().replace(/[^A-Z]/g,'');
+  const k=document.getElementById('vclave').value.toUpperCase().replace(/[^A-Z]/g,'')||'A';
+  if(!t){document.getElementById('vresult').textContent='—';document.getElementById('vsteps').innerHTML='';return;}
+  let res='',pasos=[];
   for(let i=0;i<t.length;i++){
-    const tN=t.charCodeAt(i)-65, kN=k.charCodeAt(i%k.length)-65;
+    const tN=t.charCodeAt(i)-65,kN=k.charCodeAt(i%k.length)-65;
     const rN=vmode==='cifrar'?(tN+kN)%26:((tN-kN+26)%26);
     res+=String.fromCharCode(rN+65);
     pasos.push({tL:t[i],kL:k[i%k.length],tN,kN,rN,rL:String.fromCharCode(rN+65)});
   }
   document.getElementById('vresult').textContent=res;
-  const show12=pasos.slice(0,12);
+  const s=pasos.slice(0,12);
   let html='';
   [['letter','tx',p=>p.tL],['num','nm',p=>p.tN],['key','ky',p=>p.kL],['num','nm',p=>p.kN],['result','rs',p=>p.rL]].forEach(([lbl,cls,fn])=>{
     html+=`<div class="step-row"><div class="cell hd">${lbl}</div>`;
-    show12.forEach(p=>html+=`<div class="cell ${cls}">${fn(p)}</div>`);
-    if(pasos.length>12) html+=`<div class="cell nm">+${pasos.length-12}</div>`;
+    s.forEach(p=>html+=`<div class="cell ${cls}">${fn(p)}</div>`);
+    if(pasos.length>12)html+=`<div class="cell nm">+${pasos.length-12}</div>`;
     html+='</div>';
   });
   document.getElementById('vsteps').innerHTML=html;
 }
 
-const charMap = {
-  'i':9, ' ':8, 't':10, 'o':4, 'l':3, 'd':5,
-  'N':1, 'T':10, 'X':12, 'K':2, 'C':6, 'Y':11,
-  'w':3, 'a':7, 's':2, 'b':5, 'e':9, 'r':4
-};
-const noiseNums = [8,5,3,8,1,8,10,8,5,8,3,8];
-let noiseIdx = 0;
-const phrase = "i told NTXKCY it was a bad idea to";
-
-function buildGrid() {
-  const grid = document.getElementById('numgrid');
-  let html = '';
-  for(let i=0;i<4;i++) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+// ── PUZZLE ──
+const charMap={'i':9,' ':8,'t':10,'o':4,'l':3,'d':5,'N':1,'T':10,'X':12,'K':2,'C':6,'Y':11,'w':3,'a':7,'s':2,'b':5,'e':9,'r':4};
+const noiseNums=[8,5,3,8,1,8,10,8,5,8,3,8];
+let noiseIdx=0;
+const phrase="i told NTXKCY it was a bad idea to";
+function buildGrid(){
+  const grid=document.getElementById('numgrid');
+  let html='';
+  for(let i=0;i<4;i++)html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
   for(let i=0;i<phrase.length;i++){
     const ch=phrase[i];
-    let num = charMap[ch]!==undefined ? charMap[ch] : (charMap[ch.toLowerCase()]!==undefined ? charMap[ch.toLowerCase()] : 8);
-    if(i>0&&i%5===0) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+    let num=charMap[ch]!==undefined?charMap[ch]:(charMap[ch.toLowerCase()]!==undefined?charMap[ch.toLowerCase()]:8);
+    if(i>0&&i%5===0)html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
     html+=`<span>${num}</span>`;
   }
-  for(let i=0;i<5;i++) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+  for(let i=0;i<5;i++)html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
   grid.innerHTML=html;
 }
-
 buildGrid();
+
+// ── KEY BAR ──
+function showKeyBar(){document.getElementById('keyBar').classList.add('visible');}
+function hideKeyBar(){document.getElementById('keyBar').classList.remove('visible');document.getElementById('keyError').textContent='';}
+
+// SHA-256 hash check — clave real nunca visible en el código
+async function checkKey(){
+  const raw=document.getElementById('keyInput').value.toUpperCase().replace(/\s/g,'');
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw));
+  const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  // hash de MITSKATRAPPED
+  if(hash==='a73f06db3480ca8c32e72365168d4f86e075d7c7a56f612c1ba3328dfab0ba0f'){
+    hideKeyBar();
+    document.getElementById('keyInput').value='';
+    document.getElementById('welcomePage').classList.add('active');
+  } else {
+    document.getElementById('keyError').textContent='access denied';
+    setTimeout(()=>{
+      document.getElementById('keyError').textContent='';
+      hideKeyBar();
+      showWrong();
+    },800);
+  }
+}
+
+// ── WRONG PAGE ──
+let eyeVisible=true;
+function showWrong(){
+  document.getElementById('wrongPage').classList.add('active');
+  if(!eyeVisible){
+    document.getElementById('eyeBox').style.display='block';
+    eyeVisible=true;
+  }
+  makeDraggable(document.getElementById('eyeBox'));
+}
+function closeWrong(){
+  document.getElementById('wrongPage').classList.remove('active');
+  document.getElementById('keyInput').value='';
+  eyeVisible=true;
+  document.getElementById('eyeBox').style.display='block';
+  // reset position
+  document.getElementById('eyeBox').style.left='';
+  document.getElementById('eyeBox').style.top='';
+  document.getElementById('eyeBox').style.transform='translate(-50%,-50%)';
+}
+function closeEye(){
+  document.getElementById('eyeBox').style.display='none';
+  eyeVisible=false;
+}
+
+function makeDraggable(el){
+  let ox=0,oy=0,mx=0,my=0;
+  el.onmousedown=function(e){
+    if(e.target.classList.contains('eye-close'))return;
+    e.preventDefault();
+    mx=e.clientX; my=e.clientY;
+    document.onmouseup=stopDrag;
+    document.onmousemove=doDrag;
+  };
+  function doDrag(e){
+    ox=mx-e.clientX; oy=my-e.clientY;
+    mx=e.clientX; my=e.clientY;
+    el.style.transform='none';
+    el.style.top=(el.offsetTop-oy)+'px';
+    el.style.left=(el.offsetLeft-ox)+'px';
+  }
+  function stopDrag(){
+    document.onmouseup=null;
+    document.onmousemove=null;
+  }
+}
+
+// ── WELCOME ──
+function logout(){
+  document.getElementById('welcomePage').classList.remove('active');
+  document.getElementById('keyInput').value='';
+  show('symref');
+}
+function showSub(id){
+  ['logs','videos','files','images'].forEach(s=>document.getElementById('sub-'+s).classList.remove('active'));
+  if(id) document.getElementById('sub-'+id).classList.add('active');
+}
+
 vActualizar();
 </script>
 </body>
