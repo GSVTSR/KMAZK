@@ -12,11 +12,18 @@
   .btn { background:transparent; border:0.5px solid #333; color:#666; font-family:'Courier New',monospace; font-size:12px; letter-spacing:0.15em; padding:10px 28px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
   .btn:hover { border-color:#888; color:#aaa; }
   .footer { font-size:9px; color:#222; letter-spacing:0.2em; margin-top:2rem; }
+
+  /* PANELS */
   .panel { display:none; flex-direction:column; gap:1.5rem; max-width:720px; width:100%; }
   .panel.active { display:flex; }
+  .puzzle-page { display:none; flex-direction:column; gap:1.5rem; max-width:720px; width:100%; }
+  .puzzle-page.active { display:flex; }
+
   .back { font-size:10px; color:#333; cursor:pointer; letter-spacing:0.15em; background:none; border:none; font-family:'Courier New',monospace; text-transform:uppercase; }
   .back:hover { color:#666; }
   .panel-title { font-size:10px; color:#444; letter-spacing:0.2em; border-bottom:0.5px solid #111; padding-bottom:8px; }
+
+  /* VIGENERE */
   .row { display:flex; gap:12px; flex-wrap:wrap; }
   .col { flex:1; min-width:160px; display:flex; flex-direction:column; gap:6px; }
   label { font-size:10px; color:#444; letter-spacing:0.1em; text-transform:uppercase; }
@@ -35,6 +42,8 @@
   .tab { padding:5px 16px; border:0.5px solid #222; background:transparent; color:#444; font-family:'Courier New',monospace; font-size:10px; letter-spacing:0.1em; cursor:pointer; text-transform:uppercase; }
   .tab.active { border-color:#444; color:#777; }
   .formula { font-size:10px; color:#333; padding:6px 10px; border-left:1px solid #1a1a1a; letter-spacing:0.08em; }
+
+  /* SYMBOL */
   .simbolo pre { font-size:11px; line-height:1.15; color:#555; letter-spacing:0.07em; }
   .symref-wrap { position:relative; min-height:420px; }
   .puzzle-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:8px; }
@@ -44,8 +53,8 @@
   .secret-zone { position:absolute; bottom:18px; right:22px; width:28px; height:28px; cursor:pointer; opacity:0; z-index:10; }
   .ghost-symbol { position:absolute; bottom:0; right:0; width:110px; opacity:0; transition:opacity 1.8s ease; pointer-events:none; filter:brightness(0.5); }
   .secret-zone:hover ~ .ghost-symbol { opacity:1; }
-  .puzzle-page { display:none; flex-direction:column; gap:1.5rem; max-width:720px; width:100%; }
-  .puzzle-page.active { display:flex; }
+
+  /* PUZZLE */
   .puzzle-intro { font-size:10px; color:#333; letter-spacing:0.12em; line-height:2; }
   .num-grid { display:flex; flex-wrap:wrap; gap:6px; font-family:'Courier New',monospace; font-size:13px; color:#555; line-height:2.2; letter-spacing:0.08em; }
   .num-grid span { display:inline-block; min-width:28px; text-align:center; }
@@ -103,18 +112,20 @@
 </head>
 <body>
 
+<!-- HOME -->
 <div id="home" style="display:flex;flex-direction:column;align-items:center;">
   <h1>&gt;_ KMAZK :: select an option</h1>
   <div class="menu">
-    <button class="btn" onclick="show('vigenere')">[01] vigenere cipher</button>
-    <button class="btn" onclick="show('simbolo')">[02] symbol</button>
-    <button class="btn" onclick="show('symref')">[03] symbol reference</button>
+    <button class="btn" onclick="goTo('vigenere')">[01] vigenere cipher</button>
+    <button class="btn" onclick="goTo('simbolo')">[02] symbol</button>
+    <button class="btn" onclick="goTo('symref')">[03] symbol reference</button>
   </div>
   <div class="footer">&gt;_ welcome. good luck.</div>
 </div>
 
+<!-- VIGENERE -->
 <div class="panel" id="vigenere">
-  <button class="back" onclick="show('home')">&lt; back</button>
+  <button class="back" onclick="goTo('home')">&lt; back</button>
   <div class="panel-title">&gt;_ vigenere cipher / decipher</div>
   <div class="tabs">
     <button class="tab active" onclick="setMode('cifrar',this)">encrypt</button>
@@ -138,8 +149,9 @@
   <div class="steps-wrap" id="vsteps"></div>
 </div>
 
+<!-- SIMBOLO -->
 <div class="panel" id="simbolo">
-  <button class="back" onclick="show('home')">&lt; back</button>
+  <button class="back" onclick="goTo('home')">&lt; back</button>
   <div class="panel-title">&gt;_ symbol :: ascii art</div>
   <div class="simbolo">
 <pre>
@@ -181,8 +193,9 @@
   <div style="font-size:9px;color:#1a1a1a;letter-spacing:0.15em;margin-top:1rem;">&gt;_ VIGENERE :: IRZBRXU</div>
 </div>
 
+<!-- SYMBOL REF -->
 <div class="panel" id="symref">
-  <button class="back" onclick="show('home')">&lt; back</button>
+  <button class="back" onclick="goTo('home')">&lt; back</button>
   <div class="panel-title">&gt;_ symbol reference</div>
   <div class="symref-wrap">
     <div class="puzzle-grid">
@@ -199,13 +212,14 @@
       <div class="puzzle-cell"><div class="puzzle-num">11</div><div class="puzzle-desc">dash<br>-</div></div>
       <div class="puzzle-cell"><div class="puzzle-num">12</div><div class="puzzle-desc">diagonal<br>/\</div></div>
     </div>
-    <div class="secret-zone" onclick="showKeyBar()"></div>
+    <div class="secret-zone" onclick="goTo('puzzle')"></div>
     <img class="ghost-symbol" src="sssymbol.png" alt="">
   </div>
 </div>
 
+<!-- PUZZLE -->
 <div class="puzzle-page" id="puzzle">
-  <button class="back" onclick="show('symref')">&lt; back</button>
+  <button class="back" onclick="goTo('symref')">&lt; back</button>
   <div class="panel-title">&gt;_ puzzle :: replace numbers with symbols</div>
   <div class="puzzle-intro">
     each number corresponds to a symbol.<br>
@@ -230,6 +244,7 @@
   <div class="puzzle-hint">&gt;_ hint: the encoded word uses a key you may have already seen.</div>
 </div>
 
+<!-- KEY BAR -->
 <div class="key-bar" id="keyBar">
   <label>&gt;_</label>
   <input type="password" id="keyInput" placeholder="enter key..." onkeydown="if(event.key==='Enter')checkKey()">
@@ -258,6 +273,7 @@
   </div>
 </div>
 
+<!-- WELCOME -->
 <div class="welcome-page" id="welcomePage">
   <div style="position:absolute;top:8%;left:5%;font-size:9px;color:#111;font-family:'Courier New',monospace;">&gt;_ authenticated</div>
   <div style="position:absolute;top:8%;right:5%;font-size:9px;color:#111;font-family:'Courier New',monospace;">session::active</div>
@@ -272,6 +288,7 @@
   <button class="welcome-logout" onclick="logout()">[logout]</button>
 </div>
 
+<!-- SUBPAGES -->
 <div class="subpage" id="sub-logs">
   <div class="subpage-title">&gt;_ logs</div>
   <div class="subpage-content">no entries found.<br><span style="color:#111">· · ·</span><br>this directory is empty.</div>
@@ -297,92 +314,126 @@
 // ── STATE ──
 let loggedIn = false;
 let minimized = false;
-let animFrame;
+let vmode = 'cifrar';
+const ALL_PAGES = ['home','vigenere','simbolo','symref','puzzle','welcomePage'];
 
-// ── BINARY / TEXT CONTENT ──
-function textToBin(str) {
-  return str.split('').map(c => c.charCodeAt(0).toString(2).padStart(8,'0')).join(' ');
-}
+// ── NAVIGATION ── (función única, sin bugs)
+function goTo(id) {
+  // ocultar todo
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('vigenere').classList.remove('active');
+  document.getElementById('simbolo').classList.remove('active');
+  document.getElementById('symref').classList.remove('active');
+  document.getElementById('puzzle').classList.remove('active');
 
-function getLineContent(idx) {
-  // 0.1% chance of HELP on any line
-  if(Math.random() < 0.001) return 'H E L P';
-  if(!loggedIn) {
-    // binary of "woops, wrong place fool"
-    const msg = textToBin('woops, wrong place fool');
-    return msg + '   ' + msg + '   ' + msg;
+  // key bar: solo visible en symref
+  if(id === 'symref') {
+    showKeyBar();
   } else {
-    // logged in: numbers spelling WHAT ARE YOU DOING HERE
-    const msg = 'W H A T   A R E   Y O U   D O I N G   H E R E';
-    return msg + '     ' + msg + '     ' + msg;
+    hideKeyBar();
+  }
+
+  // mostrar la página correcta
+  if(id === 'home') {
+    document.getElementById('home').style.display = 'flex';
+  } else if(id === 'puzzle') {
+    document.getElementById('puzzle').classList.add('active');
+  } else if(id === 'vigenere') {
+    document.getElementById('vigenere').classList.add('active');
+  } else if(id === 'simbolo') {
+    document.getElementById('simbolo').classList.add('active');
+  } else if(id === 'symref') {
+    document.getElementById('symref').classList.add('active');
   }
 }
 
-// ── ANIMATION ──
-const offsets = [0,0,0,0,0,0,0,0];
-const speeds  = [0.4,0.35,0.42,0.38,0.41,0.36,0.43,0.37];
-const dirs    = [1,-1,1,-1,1,-1,1,-1];
-const lineContents = ['','','','','','','',''];
-let helpActive = [false,false,false,false,false,false,false,false];
-let helpTimer  = [0,0,0,0,0,0,0,0];
-let frameCount = 0;
-
-function animateBinary() {
-  frameCount++;
-  for(let i=0;i<8;i++){
-    const el = document.getElementById('bl'+i);
-    if(!el) continue;
-
-    // every ~300 frames per line, roll for HELP
-    if(frameCount % (280 + i*17) === 0) {
-      if(Math.random() < 0.001 && !helpActive[i]) {
-        helpActive[i] = true;
-        helpTimer[i] = 120; // show for ~2 seconds
-        lineContents[i] = '  H  E  L  P  ';
-        el.classList.add('help-flash');
-      }
-    }
-
-    if(helpActive[i]) {
-      helpTimer[i]--;
-      if(helpTimer[i] <= 0) {
-        helpActive[i] = false;
-        el.classList.remove('help-flash');
-        lineContents[i] = '';
-      }
-    }
-
-    const content = helpActive[i] ? lineContents[i].repeat(12) : getLineContentStatic(i);
-    offsets[i] -= dirs[i] * speeds[i];
-    const lineW = content.length * 5.5;
-    if(offsets[i] > 0) offsets[i] -= lineW / 2;
-    if(offsets[i] < -lineW / 2) offsets[i] += lineW / 2;
-    el.style.left = offsets[i] + 'px';
-    el.textContent = content;
-  }
-  animFrame = requestAnimationFrame(animateBinary);
+// ── VIGENERE ──
+function setMode(m, el) {
+  vmode = m;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('txt-lbl').textContent = m==='cifrar' ? 'text to encrypt' : 'text to decrypt';
+  document.getElementById('res-lbl').textContent = m==='cifrar' ? 'encrypted result' : 'decrypted result';
+  document.getElementById('vformula').textContent = m==='cifrar' ? 'encrypt: (letter + key) mod 26' : 'decrypt: (letter - key + 26) mod 26';
+  vActualizar();
 }
 
-function getLineContentStatic(idx) {
-  if(!loggedIn) {
-    const msg = textToBin('woops, wrong place fool');
-    return msg + '   ' + msg + '   ' + msg;
+function vActualizar() {
+  const t = document.getElementById('vtexto').value.toUpperCase().replace(/[^A-Z]/g,'');
+  const k = document.getElementById('vclave').value.toUpperCase().replace(/[^A-Z]/g,'') || 'A';
+  if(!t) { document.getElementById('vresult').textContent='—'; document.getElementById('vsteps').innerHTML=''; return; }
+  let res='', pasos=[];
+  for(let i=0;i<t.length;i++) {
+    const tN=t.charCodeAt(i)-65, kN=k.charCodeAt(i%k.length)-65;
+    const rN=vmode==='cifrar'?(tN+kN)%26:((tN-kN+26)%26);
+    res+=String.fromCharCode(rN+65);
+    pasos.push({tL:t[i],kL:k[i%k.length],tN,kN,rN,rL:String.fromCharCode(rN+65)});
+  }
+  document.getElementById('vresult').textContent = res;
+  const s = pasos.slice(0,12);
+  let html = '';
+  [['letter','tx',p=>p.tL],['num','nm',p=>p.tN],['key','ky',p=>p.kL],['num','nm',p=>p.kN],['result','rs',p=>p.rL]].forEach(([lbl,cls,fn]) => {
+    html += `<div class="step-row"><div class="cell hd">${lbl}</div>`;
+    s.forEach(p => html += `<div class="cell ${cls}">${fn(p)}</div>`);
+    if(pasos.length>12) html += `<div class="cell nm">+${pasos.length-12}</div>`;
+    html += '</div>';
+  });
+  document.getElementById('vsteps').innerHTML = html;
+}
+
+// ── PUZZLE GRID ──
+const charMap = {'i':9,' ':8,'t':10,'o':4,'l':3,'d':5,'N':1,'T':10,'X':12,'K':2,'C':6,'Y':11,'w':3,'a':7,'s':2,'b':5,'e':9,'r':4};
+const noiseNums = [8,5,3,8,1,8,10,8,5,8,3,8];
+let noiseIdx = 0;
+const phrase = "i told NTXKCY it was a bad idea to";
+function buildGrid() {
+  const grid = document.getElementById('numgrid');
+  let html = '';
+  for(let i=0;i<4;i++) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+  for(let i=0;i<phrase.length;i++) {
+    const ch = phrase[i];
+    let num = charMap[ch]!==undefined ? charMap[ch] : (charMap[ch.toLowerCase()]!==undefined ? charMap[ch.toLowerCase()] : 8);
+    if(i>0 && i%5===0) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+    html+=`<span>${num}</span>`;
+  }
+  for(let i=0;i<5;i++) html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
+  grid.innerHTML = html;
+}
+buildGrid();
+
+// ── KEY BAR ──
+function showKeyBar() { document.getElementById('keyBar').classList.add('visible'); }
+function hideKeyBar() { document.getElementById('keyBar').classList.remove('visible'); document.getElementById('keyError').textContent=''; }
+
+async function checkKey() {
+  const raw = document.getElementById('keyInput').value.toUpperCase().replace(/\s/g,'');
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw));
+  const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(hash === 'a73f06db3480ca8c32e72365168d4f86e075d7c7a56f612c1ba3328dfab0ba0f') {
+    hideKeyBar();
+    document.getElementById('keyInput').value = '';
+    loggedIn = true;
+    document.getElementById('winTitle').textContent = '>_ session :: active';
+    showFloat();
+    document.getElementById('welcomePage').classList.add('active');
   } else {
-    const msg = 'W H A T   A R E   Y O U   D O I N G   H E R E';
-    return msg + '     ' + msg + '     ' + msg;
+    document.getElementById('keyError').textContent = 'access denied';
+    setTimeout(() => {
+      document.getElementById('keyError').textContent = '';
+      hideKeyBar();
+      loggedIn = false;
+      document.getElementById('winTitle').textContent = '>_ err :: 0x4f2a';
+      showFloat();
+    }, 800);
   }
 }
-
-animateBinary();
 
 // ── FLOAT WINDOW ──
 function toggleMin() {
   minimized = !minimized;
   document.getElementById('floatWin').classList.toggle('minimized', minimized);
 }
-function closeFloat() {
-  document.getElementById('floatWin').style.display = 'none';
-}
+function closeFloat() { document.getElementById('floatWin').style.display='none'; }
 function showFloat() {
   const w = document.getElementById('floatWin');
   w.style.display = 'flex';
@@ -409,108 +460,57 @@ function showFloat() {
   };
 })();
 
-// ── NAVIGATION ──
-let vmode = 'cifrar';
-function show(id) {
-  document.getElementById('home').style.display='none';
-  ['vigenere','simbolo','symref'].forEach(p=>document.getElementById(p).classList.remove('active'));
-  document.getElementById('puzzle').classList.remove('active');
-  if(id==='home'){ document.getElementById('home').style.display='flex'; hideKeyBar(); }
-  else if(id==='puzzle'){ document.getElementById('puzzle').classList.add('active'); hideKeyBar(); }
-  else { document.getElementById(id).classList.add('active'); }
-  if(id==='symref') showKeyBar(); else hideKeyBar();
+// ── BINARY ANIMATION ──
+function textToBin(str) {
+  return str.split('').map(c=>c.charCodeAt(0).toString(2).padStart(8,'0')).join(' ');
+}
+const offsets=[0,0,0,0,0,0,0,0];
+const speeds=[0.4,0.35,0.42,0.38,0.41,0.36,0.43,0.37];
+const dirs=[1,-1,1,-1,1,-1,1,-1];
+const helpActive=[false,false,false,false,false,false,false,false];
+const helpTimer=[0,0,0,0,0,0,0,0];
+let frameCount=0;
+
+function getContent() {
+  if(!loggedIn) return textToBin('woops, wrong place fool');
+  return 'W H A T   A R E   Y O U   D O I N G   H E R E';
 }
 
-// ── VIGENERE ──
-function setMode(m,el) {
-  vmode=m;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('txt-lbl').textContent=m==='cifrar'?'text to encrypt':'text to decrypt';
-  document.getElementById('res-lbl').textContent=m==='cifrar'?'encrypted result':'decrypted result';
-  document.getElementById('vformula').textContent=m==='cifrar'?'encrypt: (letter + key) mod 26':'decrypt: (letter - key + 26) mod 26';
-  vActualizar();
-}
-function vActualizar() {
-  const t=document.getElementById('vtexto').value.toUpperCase().replace(/[^A-Z]/g,'');
-  const k=document.getElementById('vclave').value.toUpperCase().replace(/[^A-Z]/g,'')||'A';
-  if(!t){document.getElementById('vresult').textContent='—';document.getElementById('vsteps').innerHTML='';return;}
-  let res='',pasos=[];
-  for(let i=0;i<t.length;i++){
-    const tN=t.charCodeAt(i)-65,kN=k.charCodeAt(i%k.length)-65;
-    const rN=vmode==='cifrar'?(tN+kN)%26:((tN-kN+26)%26);
-    res+=String.fromCharCode(rN+65);
-    pasos.push({tL:t[i],kL:k[i%k.length],tN,kN,rN,rL:String.fromCharCode(rN+65)});
+function animateBinary() {
+  frameCount++;
+  for(let i=0;i<8;i++) {
+    const el = document.getElementById('bl'+i);
+    if(!el) continue;
+    if(frameCount % (300+i*19)===0 && !helpActive[i] && Math.random()<0.001) {
+      helpActive[i]=true; helpTimer[i]=120;
+      el.classList.add('help-flash');
+    }
+    if(helpActive[i]) {
+      helpTimer[i]--;
+      if(helpTimer[i]<=0) { helpActive[i]=false; el.classList.remove('help-flash'); }
+    }
+    const base = helpActive[i] ? '  H  E  L  P  ' : getContent();
+    const full = base+'   '+base+'   '+base;
+    offsets[i] -= dirs[i]*speeds[i];
+    const lw = full.length*5.5;
+    if(offsets[i]>0) offsets[i]-=lw/2;
+    if(offsets[i]<-lw/2) offsets[i]+=lw/2;
+    el.style.left=offsets[i]+'px';
+    el.textContent=full;
   }
-  document.getElementById('vresult').textContent=res;
-  const s=pasos.slice(0,12);
-  let html='';
-  [['letter','tx',p=>p.tL],['num','nm',p=>p.tN],['key','ky',p=>p.kL],['num','nm',p=>p.kN],['result','rs',p=>p.rL]].forEach(([lbl,cls,fn])=>{
-    html+=`<div class="step-row"><div class="cell hd">${lbl}</div>`;
-    s.forEach(p=>html+=`<div class="cell ${cls}">${fn(p)}</div>`);
-    if(pasos.length>12)html+=`<div class="cell nm">+${pasos.length-12}</div>`;
-    html+='</div>';
-  });
-  document.getElementById('vsteps').innerHTML=html;
+  requestAnimationFrame(animateBinary);
 }
-
-// ── PUZZLE ──
-const charMap={'i':9,' ':8,'t':10,'o':4,'l':3,'d':5,'N':1,'T':10,'X':12,'K':2,'C':6,'Y':11,'w':3,'a':7,'s':2,'b':5,'e':9,'r':4};
-const noiseNums=[8,5,3,8,1,8,10,8,5,8,3,8];
-let noiseIdx=0;
-const phrase="i told NTXKCY it was a bad idea to";
-function buildGrid(){
-  const grid=document.getElementById('numgrid');
-  let html='';
-  for(let i=0;i<4;i++)html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
-  for(let i=0;i<phrase.length;i++){
-    const ch=phrase[i];
-    let num=charMap[ch]!==undefined?charMap[ch]:(charMap[ch.toLowerCase()]!==undefined?charMap[ch.toLowerCase()]:8);
-    if(i>0&&i%5===0)html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
-    html+=`<span>${num}</span>`;
-  }
-  for(let i=0;i<5;i++)html+=`<span style="color:#1a1a1a">${noiseNums[noiseIdx++%noiseNums.length]}</span>`;
-  grid.innerHTML=html;
-}
-buildGrid();
-
-// ── KEY BAR ──
-function showKeyBar(){ document.getElementById('keyBar').classList.add('visible'); }
-function hideKeyBar(){ document.getElementById('keyBar').classList.remove('visible'); document.getElementById('keyError').textContent=''; }
-
-async function checkKey(){
-  const raw=document.getElementById('keyInput').value.toUpperCase().replace(/\s/g,'');
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw));
-  const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-  if(hash==='a73f06db3480ca8c32e72365168d4f86e075d7c7a56f612c1ba3328dfab0ba0f'){
-    hideKeyBar();
-    document.getElementById('keyInput').value='';
-    loggedIn = true;
-    // update float window title
-    document.getElementById('winTitle').textContent = '>_ session :: active';
-    showFloat();
-    document.getElementById('welcomePage').classList.add('active');
-  } else {
-    document.getElementById('keyError').textContent='access denied';
-    setTimeout(()=>{
-      document.getElementById('keyError').textContent='';
-      hideKeyBar();
-      loggedIn = false;
-      document.getElementById('winTitle').textContent = '>_ err :: 0x4f2a';
-      showFloat();
-    },800);
-  }
-}
+animateBinary();
 
 // ── WELCOME ──
-function logout(){
+function logout() {
   document.getElementById('welcomePage').classList.remove('active');
   document.getElementById('keyInput').value='';
-  loggedIn = false;
-  document.getElementById('winTitle').textContent = '>_ err :: 0x4f2a';
-  show('symref');
+  loggedIn=false;
+  document.getElementById('winTitle').textContent='>_ err :: 0x4f2a';
+  goTo('symref');
 }
-function showSub(id){
+function showSub(id) {
   ['logs','videos','files','images'].forEach(s=>document.getElementById('sub-'+s).classList.remove('active'));
   if(id) document.getElementById('sub-'+id).classList.add('active');
 }
