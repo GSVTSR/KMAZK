@@ -511,6 +511,7 @@ function logout() {
   goTo('symref');
 }
 function showSub(id) {
+  if(id === 'videos') { window.location.href = 'videos.html'; return; }
   ['logs','videos','files','images'].forEach(s=>document.getElementById('sub-'+s).classList.remove('active'));
   if(id) document.getElementById('sub-'+id).classList.add('active');
 }
