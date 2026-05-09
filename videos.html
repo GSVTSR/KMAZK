@@ -8,7 +8,7 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:#000; color:#888; font-family:'Courier New',monospace; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2rem; padding:2rem; }
   .panel-title { font-size:10px; color:#444; letter-spacing:0.2em; border-bottom:0.5px solid #111; padding-bottom:8px; width:100%; max-width:500px; }
-  .back { font-size:10px; color:#333; cursor:pointer; letter-spacing:0.15em; background:none; border:none; font-family:'Courier New',monospace; text-transform:uppercase; text-decoration:none; display:block; width:100%; max-width:500px; }
+  .back { font-size:10px; color:#333; letter-spacing:0.15em; background:none; border:none; font-family:'Courier New',monospace; text-transform:uppercase; text-decoration:none; display:block; width:100%; max-width:500px; cursor:pointer; }
   .back:hover { color:#666; }
   .video-list { display:flex; flex-direction:column; gap:12px; width:100%; max-width:500px; }
   .video-item { border:0.5px solid #1a1a1a; padding:12px 16px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:12px; }
@@ -25,21 +25,21 @@
 <div class="panel-title">&gt;_ videos :: 3 entries found</div>
 
 <div class="video-list">
-  <div class="video-item" onclick="open(0)">
+  <div class="video-item" id="v0">
     <div class="video-num">[01]</div>
     <div>
       <div class="video-label">file_01.mp4</div>
       <div class="video-sub">external :: stream</div>
     </div>
   </div>
-  <div class="video-item" onclick="open(1)">
+  <div class="video-item" id="v1">
     <div class="video-num">[02]</div>
     <div>
       <div class="video-label">file_02.mp4</div>
       <div class="video-sub">external :: stream</div>
     </div>
   </div>
-  <div class="video-item" onclick="open(2)">
+  <div class="video-item" id="v2">
     <div class="video-num">[03]</div>
     <div>
       <div class="video-label">file_03.mp4</div>
@@ -51,32 +51,25 @@
 <div class="footer-deco">&gt;_ access granted :: mitska</div>
 
 <script>
-// links cifrados con XOR, nunca visibles en texto plano
 const k = 'kmazk';
-const enc = [
-  [57,28,20,4,49,12,28,20,8,49,1,28,14,10,24,1,49,15,29,25,49,30,29,28,31,25,28,1,29,28,28,15,20,24,49,28,20,22,28,0,49,28,4,26,49,26,49,3,22,57,3,15,14,7,25,15,28,10,49,26,14,28,28,4,26,26,25,26,22,25,26,24,49,28,49,28,20,6,8,26,1,49,29,8,10,8],
-  [57,28,20,4,49,12,28,20,8,49,1,28,14,10,24,1,49,15,29,25,49,3,28,49,31,25,28,1,29,28,57,3,15,14,7,25,15,28,10,49,26,14,28,28,4,26,26,25,26,22,25,26,24,49,28,49,31,25,28,1,29,28,57,3,15,14,7,25,15,28,10,49,26,14,28,28,4,26,26,25,26,22,25,26,24],
-  [57,28,20,4,49,12,28,20,8,49,1,28,14,10,24,1,49,15,29,25,49,28,49,0,22,20,28,14,49,31,25,28,1,29,28,57,3,15,14,7,25,15,28,10,49,26,14,28,28,4,26,26,25,26,22,25,26,24,49,28,49,15,29,25,57,3,15,14,7,25,15,28,10,49,26,14,28,28,4,26,26,25,26,22,25]
-];
-
-function xorDecrypt(arr, key) {
-  return arr.map((c,i) => String.fromCharCode(c ^ key.charCodeAt(i % key.length))).join('');
+function xor(str) {
+  return Array.from(str).map((c,i) => c.charCodeAt(0) ^ k.charCodeAt(i % k.length));
+}
+function deXor(arr) {
+  return arr.map((c,i) => String.fromCharCode(c ^ k.charCodeAt(i % k.length))).join('');
 }
 
-// re-encrypt the real links at runtime
-const links = [
+// links cifrados al momento de cargar la página
+const raw = [
   'https://youtube.com/shorts/oTI7hqZjKXo?si=K1jFrtDq_BJ7i2zS',
   'https://youtu.be/MEQtKGpBinE?si=fC_4NihGzu_v0Cn4',
   'https://youtu.be/9CEsoEfzKfI?si=OkfexmVhRA6Dneyd'
 ];
+const enc = raw.map(xor);
 
-// encrypt at load time so source never has plaintext
-const keys = links.map(l => Array.from(l).map((c,i) => c.charCodeAt(0) ^ k.charCodeAt(i % k.length)));
-
-function open(idx) {
-  const url = keys[idx].map((c,i) => String.fromCharCode(c ^ k.charCodeAt(i % k.length))).join('');
-  window.open(url, '_blank');
-}
+document.getElementById('v0').onclick = () => window.open(deXor(enc[0]), '_blank');
+document.getElementById('v1').onclick = () => window.open(deXor(enc[1]), '_blank');
+document.getElementById('v2').onclick = () => window.open(deXor(enc[2]), '_blank');
 </script>
 </body>
 </html>
